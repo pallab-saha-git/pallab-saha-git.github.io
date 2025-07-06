@@ -251,6 +251,43 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 500);
     }, 5000);
   }
+  
+  // Smooth scroll functionality for social menu contact button
+  const contactScrollBtn = document.querySelector('.s-intro__scroll-down a');
+  if (contactScrollBtn) {
+    contactScrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        const contactIndex = Array.from(sections).indexOf(contactSection);
+        
+        // Force scroll to contact section
+        isScrolling = true;
+        scrollContainer.scrollTo({
+          top: contactSection.offsetTop,
+          behavior: 'smooth'
+        });
+        setActiveDot(contactIndex);
+        
+        // Reset scrolling flag after animation
+        setTimeout(() => {
+          isScrolling = false;
+        }, 700);
+      }
+    });
+  }
+
+  // Add hover effects to social menu items
+  const socialLinks = document.querySelectorAll('.s-intro__social a');
+  socialLinks.forEach(link => {
+    link.addEventListener('mouseenter', () => {
+      link.style.transform = 'scale(1.15) translateY(-2px)';
+    });
+    
+    link.addEventListener('mouseleave', () => {
+      link.style.transform = 'scale(1) translateY(0)';
+    });
+  });
 });
 
 // Function to detect if glass cards are scrollable

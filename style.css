@@ -51,6 +51,12 @@ body::before {
   perspective: 1000px;
 }
 
+/* Firefox custom scrollbar */
+.scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #00f7ff rgba(8, 15, 30, 0.9);
+}
+
 /* Custom Scrollbar */
 .scroll-container::-webkit-scrollbar {
   width: 5px;
@@ -148,6 +154,173 @@ body::before {
 .dot-nav ul li a.dot.active i {
   filter: drop-shadow(0 0 5px #ffffff);
   transform: scale(1.1);
+}
+
+/* Social Menu Sidebar Styles */
+.u-screen-reader-text {
+  clip: rect(1px, 1px, 1px, 1px);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  word-wrap: normal !important;
+}
+
+.social-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.social-list li {
+  padding-left: 0;
+  margin-right: 0;
+  margin-bottom: 15px;
+}
+
+.social-list li:last-child {
+  margin-bottom: 0;
+}
+
+.social-list a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: rgba(15, 20, 35, 0.8);
+  color: #00f7ff;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 8px rgba(0, 247, 255, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+}
+
+.social-list a:hover {
+  background: rgba(25, 35, 60, 0.9);
+  color: #ffffff;
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.6);
+  border-color: rgba(0, 247, 255, 0.8);
+}
+
+.social-list svg {
+  height: 18px;
+  width: 18px;
+  transition: all 0.3s;
+}
+
+.social-list a:hover svg {
+  filter: drop-shadow(0 0 3px #ffffff);
+}
+
+.s-intro__social {
+  z-index: 1000;
+  display: block;
+  position: fixed;
+  bottom: 140px;
+  right: 30px;
+}
+
+.s-intro__scroll-down {
+  z-index: 1000;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}
+
+.s-intro__scroll-down::before {
+  content: "";
+  display: block;
+  height: 40px;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(0, 247, 255, 0.6), rgba(0, 247, 255, 0));
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.s-intro__scroll-down a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #00f7ff;
+  text-decoration: none;
+  transition: all 0.4s ease;
+}
+
+.s-intro__scroll-down .scroll-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 247, 255, 0.5);
+  background: rgba(15, 20, 35, 0.8);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+}
+
+.s-intro__scroll-down a:hover .scroll-icon {
+  transform: scale(1.1) rotate(180deg);
+  border-color: rgba(0, 247, 255, 0.8);
+  background: rgba(25, 35, 60, 0.9);
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.6);
+}
+
+.s-intro__scroll-down svg {
+  height: 20px;
+  width: 20px;
+  transform: rotate(180deg);
+  transition: all 0.3s;
+}
+
+.s-intro__scroll-down a:hover svg {
+  filter: drop-shadow(0 0 3px #ffffff);
+}
+
+/* Responsive adjustments for social menu */
+@media (max-width: 768px) {
+  .s-intro__social {
+    right: 15px;
+    bottom: 100px;
+  }
+  
+  .s-intro__scroll-down {
+    right: 15px;
+    bottom: 15px;
+  }
+  
+  .social-list a {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .social-list svg {
+    height: 16px;
+    width: 16px;
+  }
+  
+  .s-intro__scroll-down .scroll-icon {
+    height: 35px;
+    width: 35px;
+  }
+  
+  .s-intro__scroll-down::before {
+    height: 30px;
+    top: -40px;
+  }
 }
 
 /* Each Full-Screen Section */
