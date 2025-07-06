@@ -253,6 +253,67 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Function to detect if glass cards are scrollable
+function checkScrollableGlassCards() {
+  const glassCards = document.querySelectorAll('.glass-card');
+  
+  glassCards.forEach(card => {
+    // Check if content height exceeds container height
+    if (card.scrollHeight > card.clientHeight) {
+      card.classList.add('scrollable');
+      
+      // Add scroll indicators
+      if (!card.querySelector('.scroll-indicator-top')) {
+        const topIndicator = document.createElement('div');
+        topIndicator.className = 'scroll-indicator-top';
+        topIndicator.innerHTML = '<i class="fas fa-chevron-up"></i>';
+        card.appendChild(topIndicator);
+        
+        const bottomIndicator = document.createElement('div');
+        bottomIndicator.className = 'scroll-indicator-bottom';
+        bottomIndicator.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        card.appendChild(bottomIndicator);
+        
+        // Update indicators based on scroll position
+        const updateScrollIndicators = () => {
+          const isAtTop = card.scrollTop <= 10;
+          const isAtBottom = card.scrollTop >= (card.scrollHeight - card.clientHeight - 10);
+          
+          topIndicator.style.opacity = isAtTop ? '0' : '0.7';
+          bottomIndicator.style.opacity = isAtBottom ? '0' : '0.7';
+        };
+        
+        // Initial update
+        updateScrollIndicators();
+        
+        // Update on scroll
+        card.addEventListener('scroll', updateScrollIndicators);
+      }
+    } else {
+      card.classList.remove('scrollable');
+      // Remove scroll indicators if they exist
+      const topIndicator = card.querySelector('.scroll-indicator-top');
+      const bottomIndicator = card.querySelector('.scroll-indicator-bottom');
+      if (topIndicator) topIndicator.remove();
+      if (bottomIndicator) bottomIndicator.remove();
+    }
+  });
+}
+
+// Call the function when DOM is loaded and on window resize
+document.addEventListener('DOMContentLoaded', checkScrollableGlassCards);
+window.addEventListener('resize', checkScrollableGlassCards);
+
+// Also check after any dynamic content changes
+const resizeObserver = new ResizeObserver(() => {
+  checkScrollableGlassCards();
+});
+
+// Observe all glass cards for size changes
+document.querySelectorAll('.glass-card').forEach(card => {
+  resizeObserver.observe(card);
+});
+
 // Project modal popup functionality
 function openModal(modalId) {
   document.getElementById(modalId).style.display = 'block';
