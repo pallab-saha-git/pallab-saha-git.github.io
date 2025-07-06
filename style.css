@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Reset & Base */
 * {
   margin: 0;
@@ -1399,4 +1400,16 @@ strong {
   background: linear-gradient(to top, rgba(15, 25, 45, 0.9), transparent);
   pointer-events: none;
   z-index: 1;
+=======
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin-top: 100px;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+h1 {
+  color: #007acc;
+>>>>>>> 5e3ec8957e76db607287488b51118f28d1255475
 }
