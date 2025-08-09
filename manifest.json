@@ -1,0 +1,28 @@
+{
+  "name": "Pallab Saha - Portfolio",
+  "short_name": "Pallab Saha",
+  "description": "Portfolio website of Pallab Saha - AI Developer, Robotics Engineer, ML Specialist",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050714",
+  "theme_color": "#00f7ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon-16x16.jpg",
+      "sizes": "16x16",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "favicon-32x32.jpg",
+      "sizes": "32x32",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "favicon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ],
+  "categories": ["portfolio", "developer", "ai", "robotics"]
+}

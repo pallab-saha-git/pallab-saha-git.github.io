@@ -13,6 +13,10 @@ html, body {
   scroll-behavior: smooth;
   background: #050714;
   font-size: 15px; /* Base font size reduced from default */
+  font-display: swap; /* Optimize font loading */
+  /* Prevent layout shifts during font loading */
+  font-synthesis: none;
+  text-rendering: optimizeSpeed;
 }
 
 /* Animated Background */

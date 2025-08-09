@@ -1,16 +1,43 @@
 // Three.js background animation setup
 document.addEventListener('DOMContentLoaded', function() {
   const canvas = document.getElementById('bg-canvas');
+  
+  // Check if Three.js is loaded and device capabilities before initializing
+  if (typeof THREE === 'undefined') {
+    console.warn('Three.js not loaded, skipping 3D background');
+    return;
+  }
+  
+  // Skip 3D background on low-performance devices
+  const isLowPerformanceDevice = () => {
+    return (
+      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      navigator.hardwareConcurrency < 4 ||
+      window.innerWidth < 768
+    );
+  };
+  
+  if (isLowPerformanceDevice()) {
+    console.log('Low performance device detected, skipping 3D background');
+    canvas.style.display = 'none';
+    return;
+  }
+  
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({ 
+    canvas, 
+    alpha: true, 
+    antialias: false, // Disable for performance
+    powerPreference: "low-power" // Prefer integrated GPU
+  });
   
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Cap pixel ratio for performance
   
-  // Create particles
+  // Create particles with reduced count for better performance
   const particlesGeometry = new THREE.BufferGeometry();
-  const particlesCount = 1000;
+  const particlesCount = window.innerWidth < 768 ? 300 : 800; // Fewer particles on mobile
   
   const posArray = new Float32Array(particlesCount * 3);
   for(let i = 0; i < particlesCount * 3; i++) {
@@ -32,9 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   camera.position.z = 5;
   
-  // Animation loop
+  // Animation loop with performance optimization
+  let animationId;
   function animate() {
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
     
     particlesMesh.rotation.y += 0.0005;
     particlesMesh.rotation.x -= 0.0002;
@@ -42,19 +70,59 @@ document.addEventListener('DOMContentLoaded', function() {
     renderer.render(scene, camera);
   }
   
-  animate();
+  // Only start animation if page is visible
+  if (!document.hidden) {
+    animate();
+  }
   
-  // Resize handler
+  // Pause animation when tab is not visible
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    } else {
+      animate();
+    }
+  });
+  
+  // Optimized resize handler with debouncing
+  let resizeTimeout;
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }, 100);
   });
 
   // Scroll handling code
   const scrollContainer = document.querySelector('.scroll-container');
   const dots = document.querySelectorAll('.dot-nav ul li a.dot');
   const sections = document.querySelectorAll('.section');
+  
+  // Cache section positions to avoid repeated DOM reads
+  let sectionPositions = [];
+  
+  function updateSectionPositions() {
+    sectionPositions = Array.from(sections).map(section => ({
+      element: section,
+      top: section.offsetTop,
+      height: section.offsetHeight
+    }));
+  }
+  
+  // Initial calculation
+  updateSectionPositions();
+  
+  // Update positions on resize
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      updateSectionPositions();
+    }, 100);
+  });
   
   // Add section observers for animations
   const sectionObserver = new IntersectionObserver((entries) => {
@@ -84,9 +152,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (dots[index]) dots[index].classList.add('active');
   }
 
-  // Scroll one section at a time on wheel event
+  // Optimized scroll handling with throttling
   let isScrolling = false;
-  scrollContainer.addEventListener('wheel', (e) => {
+  let scrollTimeout;
+  
+  function handleWheel(e) {
     if (isScrolling) return;
     e.preventDefault();
 
@@ -94,30 +164,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentScroll = scrollContainer.scrollTop;
     const viewportHeight = window.innerHeight;
 
-    // Find current section index
-    let currentIndex = Array.from(sections).findIndex((section, idx) => {
-      const top = section.offsetTop;
-      return currentScroll >= top - viewportHeight / 2 && currentScroll < top + viewportHeight / 2;
+    // Find current section index using cached positions
+    let currentIndex = sectionPositions.findIndex((section, idx) => {
+      return currentScroll >= section.top - viewportHeight / 2 && currentScroll < section.top + viewportHeight / 2;
     });
 
-    if (delta > 0 && currentIndex < sections.length - 1) {
+    if (delta > 0 && currentIndex < sectionPositions.length - 1) {
       currentIndex++;
     } else if (delta < 0 && currentIndex > 0) {
       currentIndex--;
     }
 
-    isScrolling = true;
-    scrollContainer.scrollTo({
-      top: sections[currentIndex].offsetTop,
-      behavior: 'smooth',
-    });
+    if (currentIndex >= 0 && currentIndex < sectionPositions.length) {
+      isScrolling = true;
+      scrollContainer.scrollTo({
+        top: sectionPositions[currentIndex].top,
+        behavior: 'smooth',
+      });
 
-    setActiveDot(currentIndex);
+      setActiveDot(currentIndex);
 
-    setTimeout(() => {
-      isScrolling = false;
-    }, 700);
-  }, { passive: false });
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false;
+      }, 700);
+    }
+  }
+  
+  scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
 
   // Dot navigation click
   dots.forEach((dot, idx) => {
@@ -131,68 +205,108 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Set active dot on scroll (in case user scrolls manually)
+  // Set active dot on scroll (optimized with cached positions)
+  let scrollThrottleTimeout;
   scrollContainer.addEventListener('scroll', () => {
     if (isScrolling) return; // Don't interfere with programmatic scrolling
     
-    const scrollPos = scrollContainer.scrollTop;
-    const viewportHeight = window.innerHeight;
-    
-    // Find the section that's most visible in the viewport
-    let maxVisibleSection = 0;
-    let maxVisibleAmount = 0;
-    
-    sections.forEach((section, idx) => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.offsetHeight;
+    // Throttle scroll events for better performance
+    if (scrollThrottleTimeout) return;
+    scrollThrottleTimeout = setTimeout(() => {
+      scrollThrottleTimeout = null;
       
-      // Calculate how much of the section is visible
-      const visibleTop = Math.max(scrollPos, sectionTop);
-      const visibleBottom = Math.min(scrollPos + viewportHeight, sectionTop + sectionHeight);
-      const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+      const scrollPos = scrollContainer.scrollTop;
+      const viewportHeight = window.innerHeight;
       
-      if (visibleAmount > maxVisibleAmount) {
-        maxVisibleAmount = visibleAmount;
-        maxVisibleSection = idx;
-      }
-    });
-    
-    // Set the dot corresponding to the most visible section as active
-    setActiveDot(maxVisibleSection);
+      // Find the section that's most visible using cached positions
+      let maxVisibleSection = 0;
+      let maxVisibleAmount = 0;
+      
+      sectionPositions.forEach((section, idx) => {
+        // Calculate how much of the section is visible
+        const visibleTop = Math.max(scrollPos, section.top);
+        const visibleBottom = Math.min(scrollPos + viewportHeight, section.top + section.height);
+        const visibleAmount = Math.max(0, visibleBottom - visibleTop);
+        
+        if (visibleAmount > maxVisibleAmount) {
+          maxVisibleAmount = visibleAmount;
+          maxVisibleSection = idx;
+        }
+      });
+      
+      setActiveDot(maxVisibleSection);
+    }, 16); // ~60fps throttling
   });
   
-  // Mouse move parallax effect for home section
+  // Optimized mouse move parallax effect with RAF
+  let mouseMoveRAF;
+  let mouseData = { x: 0, y: 0 };
+  
   document.addEventListener('mousemove', (e) => {
-    const homeSection = document.getElementById('home');
-    if(!homeSection.classList.contains('in-view')) return;
+    mouseData.x = e.clientX / window.innerWidth - 0.5;
+    mouseData.y = e.clientY / window.innerHeight - 0.5;
     
-    const mouseX = e.clientX / window.innerWidth - 0.5;
-    const mouseY = e.clientY / window.innerHeight - 0.5;
+    if (mouseMoveRAF) return;
     
-    const profileImg = document.querySelector('.profile-img-container');
-    const nameDisplay = document.querySelector('.name-display');
-    const logos = document.querySelector('.logos');
-    
-    if(profileImg) profileImg.style.transform = `translateX(${mouseX * 20}px) translateY(${mouseY * 20}px)`;
-    if(nameDisplay) nameDisplay.style.transform = `translateX(${mouseX * -15}px) translateY(${mouseY * -15}px)`;
-    if(logos) logos.style.transform = `translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`;
+    mouseMoveRAF = requestAnimationFrame(() => {
+      mouseMoveRAF = null;
+      
+      const homeSection = document.getElementById('home');
+      if(!homeSection || !homeSection.classList.contains('in-view')) return;
+      
+      const profileImg = document.querySelector('.profile-img-container');
+      const nameDisplay = document.querySelector('.name-display');
+      const logos = document.querySelector('.logos');
+      
+      // Use transform3d for better performance
+      if(profileImg) profileImg.style.transform = `translate3d(${mouseData.x * 20}px, ${mouseData.y * 20}px, 0)`;
+      if(nameDisplay) nameDisplay.style.transform = `translate3d(${mouseData.x * -15}px, ${mouseData.y * -15}px, 0)`;
+      if(logos) logos.style.transform = `translate3d(${mouseData.x * 10}px, ${mouseData.y * 10}px, 0)`;
+    });
   });
   
-  // Tilt effect for cards
+  // Optimized tilt effect for cards with cached rects
   const cards = document.querySelectorAll('.glass-card');
+  const cardRects = new Map();
+  
+  // Cache card rectangles initially and on resize
+  function updateCardRects() {
+    cards.forEach(card => {
+      cardRects.set(card, card.getBoundingClientRect());
+    });
+  }
+  
+  updateCardRects();
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(updateCardRects, 100);
+  });
+  
   cards.forEach(card => {
+    let cardMoveRAF;
+    
     card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      if (cardMoveRAF) return;
       
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      const percentX = (x - centerX) / centerX;
-      const percentY = (y - centerY) / centerY;
-      
-      card.style.transform = `perspective(1000px) rotateY(${percentX * 2}deg) rotateX(${percentY * -2}deg) translateZ(10px)`;
+      cardMoveRAF = requestAnimationFrame(() => {
+        cardMoveRAF = null;
+        
+        const rect = cardRects.get(card);
+        if (!rect) return;
+        
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const percentX = (x - centerX) / centerX;
+        const percentY = (y - centerY) / centerY;
+        
+        // Reduced rotation values for a more subtle, upright effect
+        // Changed from *2 and *-2 to much smaller values to prevent "laid back" appearance
+        card.style.transform = `perspective(1000px) rotateY(${percentX * 0.5}deg) rotateX(${percentY * -0.3}deg) translateZ(5px)`;
+      });
     });
     
     card.addEventListener('mouseleave', () => {

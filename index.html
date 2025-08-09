@@ -4,29 +4,55 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Pallab Saha</title>
+    
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- DNS prefetch for additional optimization -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   
-    <!-- Google Fonts - Updated for better readability -->
+    <!-- Critical CSS inline for fastest loading -->
+    <style>
+      /* Critical CSS for above-the-fold content */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { height: 100%; font-family: 'Inter', sans-serif; color: #e0f7ff; overflow: hidden; background: #050714; font-size: 15px; font-display: swap; }
+      #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+      .home-content { display: flex; align-items: center; justify-content: center; height: 100vh; gap: 50px; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+      .profile-img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #00f7ff; box-shadow: 0 0 30px rgba(0, 247, 255, 0.5); }
+      .text-content { flex: 1; min-width: 300px; }
+      .name-display h1 { font-family: 'Orbitron', monospace; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; background: linear-gradient(45deg, #00f7ff, #ffffff, #00f7ff); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 3s ease-in-out infinite; margin-bottom: 1rem; }
+      @keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+      @media (max-width: 768px) { .home-content { flex-direction: column; gap: 30px; text-align: center; } .profile-img { width: 94px; height: 94px; } .name-display h1 { font-size: 2rem; } }
+    </style>
+    
+    <!-- Preload important resources -->
+    <link rel="preload" href="assets/PallabSaha.webp" as="image" type="image/webp">
+    <link rel="preload" href="style.css" as="style">
+    
+    <!-- Google Fonts with font-display swap -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;500;600;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet" />
   
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      crossorigin="anonymous"
-    />
-    
-    <!-- Three.js for 3D effects -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <!-- Typed.js for text typing animation -->
-    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css" />
+    <!-- Non-critical CSS loaded asynchronously -->
+    <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
     
     <!-- favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.jpg">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.jpg">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#00f7ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
   
@@ -99,7 +125,11 @@
       
       <div class="home-content">
         <div class="profile-img-container">
-          <img src="assets/PallabSaha.webp" alt="Your Profile Picture" class="profile-img" />
+          <img src="assets/PallabSaha.webp" alt="Your Profile Picture" class="profile-img" 
+               fetchpriority="high" 
+               width="150" 
+               height="150"
+               sizes="(max-width: 768px) 94px, 154px" />
         </div>
         
         <div class="text-content">
@@ -111,29 +141,35 @@
           
           <div class="logos" aria-label="Logos of current company and college">
             <div class="logo-container">
-              <img src="assets/Cognizant.svg" alt="Current Company Logo" class="logo-img" />
+              <img src="assets/Cognizant.svg" alt="Current Company Logo" class="logo-img" 
+                   width="84" height="84" sizes="(max-width: 768px) 44px, 84px" />
               <span class="logo-text">Cognizant</span>
             </div>
             <div class="logo-container">
-              <img src="assets/IIT-Jodhpur-logo.webp" alt="College Logo" class="logo-img" />
+              <img src="assets/IIT-Jodhpur-logo.webp" alt="College Logo" class="logo-img" 
+                   width="76" height="84" sizes="(max-width: 768px) 40px, 76px" />
               <span class="logo-text">IIT Jodhpur</span>
             </div>
             <div class="logo-container">
-              <img src="assets/Makaut.jpg" alt="College Logo" class="logo-img" />
+              <img src="assets/Makaut.jpg" alt="College Logo" class="logo-img" 
+                   width="84" height="84" sizes="(max-width: 768px) 44px, 84px" />
               <span class="logo-text">MAKAUT</span>
             </div>
             <div class="logo-container">
-              <img src="assets/DESC.png" alt="College Logo" class="logo-img" />
+              <img src="assets/DESC.png" alt="College Logo" class="logo-img" 
+                   width="84" height="82" sizes="(max-width: 768px) 44px, 84px" />
               <span class="logo-text">DSEC</span>
             </div>            
           </div>
           <div class="logos" aria-label="Logos of current company and college">            
             <div class="logo-container">
-              <img src="assets/igmhs.png" alt="College Logo" class="logo-img" />
+              <img src="assets/igmhs.png" alt="College Logo" class="logo-img" 
+                   width="78" height="84" sizes="(max-width: 768px) 41px, 78px" />
               <span class="logo-text">IGMHS</span>
             </div>
             <div class="logo-container">
-              <img src="assets/jds.jpg" alt="College Logo" class="logo-img" />
+              <img src="assets/jds.jpg" alt="College Logo" class="logo-img" 
+                   width="84" height="84" sizes="(max-width: 768px) 44px, 84px" />
               <span class="logo-text">JDS</span>
             </div>
           </div>
@@ -519,10 +555,10 @@
               <span>Kolkata, West Bengal, India</span>
             </div>
             
-            <div class="contact-item">
+            <!-- <div class="contact-item">
               <div class="contact-icon"><i class="fas fa-envelope"></i></div>
               <a href="mailto:psp19980@gmail.com" class="contact-link">psp19980@gmail.com</a>
-            </div>
+            </div> -->
             
             <div class="contact-item">
               <div class="contact-icon"><i class="fas fa-envelope-open-text"></i></div>
@@ -559,7 +595,43 @@
 
   </div>
 
-  <!-- Custom JavaScript -->
-  <script src="script.js"></script>
+  <!-- Font Awesome - Deferred loading -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous"
+    media="print" onload="this.media='all'"
+  />
+  <noscript>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+    />
+  </noscript>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+
+  <!-- Three.js for 3D effects - Deferred -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  
+  <!-- Typed.js for text typing animation - Deferred -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12" defer></script>
+
+  <!-- Custom JavaScript - Deferred -->
+  <script src="script.js" defer></script>
 </body>
 </html>
