@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Architecture - All Diagrams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        
+        .diagrams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .diagram-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+        
+        .diagram-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+        
+        .diagram-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .diagram-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .diagram-card a {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        
+        .diagram-card a:hover {
+            background: #2980b9;
+        }
+        
+        .main-presentation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .main-presentation h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .main-presentation a {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .main-presentation a:hover {
+            transform: scale(1.05);
+        }
+        
+        .features {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .features h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .features li {
+            color: #7f8c8d;
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-robot"></i> Chatbot Architecture Diagrams</h1>
+        
+        <div class="main-presentation">
+            <h2><i class="fas fa-presentation"></i> Complete Presentation</h2>
+            <p>Interactive presentation with all diagrams, explanations, and implementation details</p>
+            <a href="chatbot_architecture_presentation.html"><i class="fas fa-play"></i> View Full Presentation</a>
+            <a href="chatbot_architecture_single_page.html"><i class="fas fa-file-alt"></i> Single Page Overview</a>
+            <a href="platform_comparison.html"><i class="fas fa-balance-scale"></i> Compare Platforms</a>
+        </div>
+        
+        <div class="features">
+            <h3><i class="fas fa-star"></i> Architecture Features</h3>
+            <ul>
+                <li>WordPress & HTML website integration</li>
+                <li>AI-powered responses using website content</li>
+                <li>WhatsApp escalation for complex queries</li>
+                <li>Cost-efficient cloud and self-hosted options</li>
+                <li>Vector database for semantic search</li>
+                <li>Real-time chat processing</li>
+                <li>Comprehensive security and compliance</li>
+            </ul>
+        </div>
+        
+        <div class="diagrams-grid">
+            <div class="diagram-card">
+                <h3><i class="fas fa-sitemap"></i> System Architecture</h3>
+                <p>Overview of the complete chatbot system showing all major components and their relationships.</p>
+                <a href="architecture_diagram.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fas fa-project-diagram"></i> Detailed Architecture</h3>
+                <p>Comprehensive diagram with detailed components, technology options, and infrastructure choices.</p>
+                <a href="detailed_architecture_diagram.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fas fa-stream"></i> Sequence Flow</h3>
+                <p>Step-by-step flow showing how user requests are processed from query to response or escalation.</p>
+                <a href="sequence_diagram.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fab fa-google"></i> Google Cloud Platform</h3>
+                <p>Complete GCP-specific architecture with Vertex AI, Cloud Run, and Google Cloud services.</p>
+                <a href="google_cloud_architecture.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fab fa-microsoft"></i> Microsoft Azure</h3>
+                <p>Azure-specific implementation using Azure OpenAI, Cognitive Search, and Azure services.</p>
+                <a href="microsoft_azure_architecture.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fab fa-aws"></i> Amazon Web Services</h3>
+                <p>AWS-based architecture with Bedrock, Lambda, and comprehensive AWS service integration.</p>
+                <a href="amazon_aws_architecture.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fas fa-server"></i> Local/Self-Hosted</h3>
+                <p>On-premise solution with Docker, open-source AI models, and complete infrastructure control.</p>
+                <a href="local_self_hosted_architecture.html">View Diagram</a>
+            </div>
+            
+            <div class="diagram-card">
+                <h3><i class="fas fa-file-code"></i> Technical Guide</h3>
+                <p>Detailed technical documentation with code examples, implementation details, and best practices.</p>
+                <a href="chatbot_architecture_guide.md">View Guide</a>
+            </div>
+        </div>
+        
+        <div style="background: #2c3e50; color: white; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
+            <h3><i class="fas fa-download"></i> All Files Available</h3>
+            <p>All diagrams are saved as individual HTML files that can be opened in any web browser</p>
+            <p><strong>Files created:</strong> 10 HTML files + 1 Markdown guide + 1 README</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: #3498db; padding: 10px; border-radius: 5px;">
+                    <strong>General Diagrams</strong><br>
+                    • System Overview<br>
+                    • Detailed Architecture<br>
+                    • Sequence Flow
+                </div>
+                <div style="background: #4285f4; padding: 10px; border-radius: 5px;">
+                    <strong>Google Cloud</strong><br>
+                    • Vertex AI<br>
+                    • Cloud Run<br>
+                    • Firebase
+                </div>
+                <div style="background: #0078d4; padding: 10px; border-radius: 5px;">
+                    <strong>Microsoft Azure</strong><br>
+                    • Azure OpenAI<br>
+                    • Cognitive Search<br>
+                    • App Service
+                </div>
+                <div style="background: #ff9900; padding: 10px; border-radius: 5px; color: black;">
+                    <strong>Amazon AWS</strong><br>
+                    • Bedrock<br>
+                    • Lambda<br>
+                    • Kendra
+                </div>
+                <div style="background: #27ae60; padding: 10px; border-radius: 5px;">
+                    <strong>Local/Self-Hosted</strong><br>
+                    • Docker<br>
+                    • Ollama<br>
+                    • Open Source
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

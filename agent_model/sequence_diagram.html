@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Sequence Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Request Processing Flow</h1>
+    <div class="diagram-container">
+        <div class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant W as Website
+    participant C as Chatbot Widget
+    participant A as API Gateway
+    participant P as Processor
+    participant V as Vector DB
+    participant L as LLM
+    participant WA as WhatsApp
+    
+    U->>W: Visit Website
+    W->>C: Load Chatbot
+    U->>C: Ask Question
+    C->>A: Send Query
+    A->>P: Process Request
+    
+    P->>V: Search Similar Content
+    V-->>P: Return Relevant Chunks
+    
+    P->>L: Generate Response
+    Note over L: Context: Website content<br/>+ Additional KB
+    L-->>P: AI Response
+    
+    alt Confident Response
+        P-->>A: Return Answer
+        A-->>C: Send Response
+        C-->>U: Display Answer
+    else Low Confidence
+        P->>WA: Escalate to Human
+        WA-->>U: WhatsApp Notification
+        Note over U,WA: Continue on WhatsApp
+    end
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            sequence: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

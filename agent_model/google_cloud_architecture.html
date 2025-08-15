@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Cloud Platform - Chatbot Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4285f4;
+        }
+        .header h1 {
+            color: #1a73e8;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .cost-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 6px solid #4285f4;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fab fa-google"></i> Google Cloud Platform</h1>
+            <h2>Chatbot Architecture with GCP Services</h2>
+        </div>
+        
+        <div class="mermaid">
+graph TB
+    subgraph "Frontend & CDN"
+        CDN["`**Cloud CDN**
+        • Global edge caching
+        • SSL certificates
+        • Load balancing`"]
+        
+        Widget["`**Chatbot Widget**
+        • Hosted on Firebase Hosting
+        • PWA capabilities
+        • Real-time updates`"]
+    end
+    
+    subgraph "API Gateway & Security"
+        APIGateway["`**Cloud Endpoints**
+        • API management
+        • Authentication
+        • Rate limiting
+        • Monitoring`"]
+        
+        IAM["`**Identity & Access Management**
+        • Service accounts
+        • OAuth 2.0
+        • JWT validation`"]
+        
+        CloudArmor["`**Cloud Armor**
+        • DDoS protection
+        • WAF rules
+        • Bot protection`"]
+    end
+    
+    subgraph "Compute & Processing"
+        CloudFunctions["`**Cloud Functions**
+        • Serverless compute
+        • Auto-scaling
+        • Event-driven
+        • Node.js/Python`"]
+        
+        CloudRun["`**Cloud Run**
+        • Containerized apps
+        • HTTP endpoints
+        • Pay-per-request`"]
+        
+        GKE["`**Google Kubernetes Engine**
+        • Managed Kubernetes
+        • Auto-scaling pods
+        • Load balancing`"]
+    end
+    
+    subgraph "AI & ML Services"
+        VertexAI["`**Vertex AI**
+        • Gemini Pro/Flash
+        • PaLM 2 models
+        • Custom models
+        • MLOps pipeline`"]
+        
+        MatchingEngine["`**Vertex AI Matching Engine**
+        • Vector similarity search
+        • Real-time inference
+        • Managed embeddings`"]
+        
+        NaturalLanguage["`**Natural Language AI**
+        • Sentiment analysis
+        • Entity extraction
+        • Content classification`"]
+        
+        TextEmbedding["`**Text Embedding API**
+        • Gecko embeddings
+        • Multilingual support
+        • High-quality vectors`"]
+    end
+    
+    subgraph "Data & Storage"
+        Firestore["`**Cloud Firestore**
+        • NoSQL database
+        • Real-time sync
+        • Offline support
+        • Multi-region`"]
+        
+        CloudSQL["`**Cloud SQL**
+        • Managed PostgreSQL
+        • High availability
+        • Automatic backups`"]
+        
+        CloudStorage["`**Cloud Storage**
+        • Object storage
+        • Website content
+        • ML model storage`"]
+        
+        Memorystore["`**Memorystore for Redis**
+        • Managed Redis
+        • High availability
+        • Automatic failover`"]
+    end
+    
+    subgraph "External Integrations"
+        PubSub["`**Cloud Pub/Sub**
+        • Message queuing
+        • Event streaming
+        • Reliable delivery`"]
+        
+        WhatsAppAPI["`**WhatsApp Business API**
+        • Twilio integration
+        • Cloud messaging
+        • Webhook endpoints`"]
+        
+        Monitoring["`**Cloud Operations Suite**
+        • Stackdriver monitoring
+        • Error reporting
+        • APM traces`"]
+    end
+    
+    subgraph "Content Processing"
+        Scheduler["`**Cloud Scheduler**
+        • Cron jobs
+        • Website crawling
+        • Content updates`"]
+        
+        Dataflow["`**Cloud Dataflow**
+        • Stream processing
+        • Content indexing
+        • ETL pipelines`"]
+        
+        DocumentAI["`**Document AI**
+        • PDF processing
+        • Form parsing
+        • OCR capabilities`"]
+    end
+    
+    %% Connections
+    CDN --> Widget
+    Widget --> APIGateway
+    APIGateway --> IAM
+    APIGateway --> CloudArmor
+    APIGateway --> CloudFunctions
+    CloudFunctions --> PubSub
+    PubSub --> CloudRun
+    CloudRun --> Memorystore
+    CloudRun --> MatchingEngine
+    MatchingEngine --> VertexAI
+    VertexAI --> NaturalLanguage
+    CloudRun --> Firestore
+    CloudRun --> WhatsAppAPI
+    
+    Scheduler --> Dataflow
+    Dataflow --> TextEmbedding
+    TextEmbedding --> MatchingEngine
+    CloudStorage --> DocumentAI
+    DocumentAI --> Dataflow
+    
+    CloudFunctions --> Monitoring
+    CloudRun --> Monitoring
+    
+    %% Styling
+    classDef gcp fill:#4285f4,stroke:#1a73e8,stroke-width:2px,color:#fff
+    classDef ai fill:#ea4335,stroke:#d93025,stroke-width:2px,color:#fff
+    classDef data fill:#34a853,stroke:#137333,stroke-width:2px,color:#fff
+    classDef external fill:#fbbc04,stroke:#f9ab00,stroke-width:2px,color:#000
+    
+    class CDN,Widget,APIGateway,IAM,CloudArmor,CloudFunctions,CloudRun,GKE gcp
+    class VertexAI,MatchingEngine,NaturalLanguage,TextEmbedding ai
+    class Firestore,CloudSQL,CloudStorage,Memorystore data
+    class PubSub,WhatsAppAPI,Monitoring,Scheduler,Dataflow,DocumentAI external
+        </div>
+        
+        <div class="cost-section">
+            <h3><i class="fas fa-dollar-sign"></i> Google Cloud Pricing Estimate</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Compute & Processing:</h4>
+                    <ul>
+                        <li>Cloud Functions: $0.40/million requests</li>
+                        <li>Cloud Run: $0.24/vCPU hour</li>
+                        <li>Vertex AI (Gemini): $0.0005/1K tokens</li>
+                        <li>Matching Engine: $0.22/hour/node</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Storage & Data:</h4>
+                    <ul>
+                        <li>Firestore: $0.18/100K operations</li>
+                        <li>Cloud Storage: $0.020/GB/month</li>
+                        <li>Memorystore: $0.049/GB/hour</li>
+                        <li>Pub/Sub: $0.60/million messages</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #1a73e8; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px;">
+                <strong>Total Estimated Cost: $120-400/month</strong>
+                <p>Based on 100K queries/month with moderate traffic</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

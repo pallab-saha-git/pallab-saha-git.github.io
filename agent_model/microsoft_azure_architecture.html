@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Azure - Chatbot Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #0078d4;
+        }
+        .header h1 {
+            color: #0078d4;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .cost-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 6px solid #0078d4;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fab fa-microsoft"></i> Microsoft Azure</h1>
+            <h2>Chatbot Architecture with Azure Services</h2>
+        </div>
+        
+        <div class="mermaid">
+graph TB
+    subgraph "Frontend & CDN"
+        StaticWebApps["`**Azure Static Web Apps**
+        • Global CDN
+        • Custom domains
+        • SSL certificates
+        • GitHub Actions CI/CD`"]
+        
+        CDN["`**Azure CDN**
+        • Edge caching
+        • Global distribution
+        • Custom rules`"]
+        
+        Widget["`**Chatbot Widget**
+        • React/Vue.js
+        • SignalR real-time
+        • PWA support`"]
+    end
+    
+    subgraph "API Management & Security"
+        APIM["`**Azure API Management**
+        • Gateway management
+        • Rate limiting
+        • Authentication
+        • API analytics`"]
+        
+        AppGateway["`**Azure Application Gateway**
+        • Layer 7 load balancer
+        • SSL termination
+        • WAF protection`"]
+        
+        AAD["`**Azure Active Directory**
+        • Identity management
+        • OAuth 2.0
+        • JWT validation
+        • B2C integration`"]
+        
+        KeyVault["`**Azure Key Vault**
+        • API keys storage
+        • Certificates
+        • Secrets management`"]
+    end
+    
+    subgraph "Compute Services"
+        Functions["`**Azure Functions**
+        • Serverless compute
+        • Event-driven
+        • Multiple triggers
+        • Auto-scaling`"]
+        
+        AppService["`**Azure App Service**
+        • Web apps hosting
+        • Container support
+        • Staging slots`"]
+        
+        ContainerInstances["`**Azure Container Instances**
+        • Fast container deployment
+        • Per-second billing
+        • Managed service`"]
+    end
+    
+    subgraph "AI & Cognitive Services"
+        OpenAI["`**Azure OpenAI Service**
+        • GPT-4/GPT-3.5 Turbo
+        • ChatGPT models
+        • Content filtering
+        • Private deployment`"]
+        
+        CognitiveSearch["`**Azure Cognitive Search**
+        • Vector search
+        • Semantic search
+        • AI enrichment
+        • Custom skills`"]
+        
+        Language["`**Azure AI Language**
+        • Sentiment analysis
+        • Entity recognition
+        • Key phrase extraction
+        • Question answering`"]
+        
+        FormRecognizer["`**Azure Form Recognizer**
+        • Document processing
+        • OCR capabilities
+        • Custom models`"]
+    end
+    
+    subgraph "Data & Storage"
+        CosmosDB["`**Azure Cosmos DB**
+        • NoSQL database
+        • Global distribution
+        • Multi-model
+        • Vector search`"]
+        
+        SQLDatabase["`**Azure SQL Database**
+        • Managed SQL
+        • High availability
+        • Automatic tuning`"]
+        
+        BlobStorage["`**Azure Blob Storage**
+        • Object storage
+        • Hot/Cool/Archive tiers
+        • Static website hosting`"]
+        
+        Redis["`**Azure Cache for Redis**
+        • In-memory cache
+        • High availability
+        • Clustering support`"]
+    end
+    
+    subgraph "Messaging & Events"
+        ServiceBus["`**Azure Service Bus**
+        • Message queuing
+        • Pub/Sub messaging
+        • Dead letter queues`"]
+        
+        EventGrid["`**Azure Event Grid**
+        • Event routing
+        • Serverless eventing
+        • Custom topics`"]
+        
+        SignalR["`**Azure SignalR Service**
+        • Real-time messaging
+        • WebSocket support
+        • Auto-scaling`"]
+    end
+    
+    subgraph "External & Monitoring"
+        LogicApps["`**Azure Logic Apps**
+        • WhatsApp integration
+        • Workflow automation
+        • 400+ connectors`"]
+        
+        Monitor["`**Azure Monitor**
+        • Application Insights
+        • Log Analytics
+        • Custom metrics
+        • Alerts`"]
+        
+        DevOps["`**Azure DevOps**
+        • CI/CD pipelines
+        • Code repositories
+        • Release management`"]
+    end
+    
+    %% Connections
+    StaticWebApps --> CDN
+    CDN --> Widget
+    Widget --> APIM
+    APIM --> AppGateway
+    AppGateway --> AAD
+    AAD --> KeyVault
+    APIM --> Functions
+    Functions --> ServiceBus
+    ServiceBus --> AppService
+    AppService --> Redis
+    AppService --> CognitiveSearch
+    CognitiveSearch --> OpenAI
+    OpenAI --> Language
+    AppService --> CosmosDB
+    AppService --> LogicApps
+    
+    EventGrid --> FormRecognizer
+    FormRecognizer --> CognitiveSearch
+    BlobStorage --> EventGrid
+    
+    Functions --> Monitor
+    AppService --> Monitor
+    LogicApps --> SignalR
+    
+    %% Styling
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
+    classDef ai fill:#ff6b35,stroke:#e55a2b,stroke-width:2px,color:#fff
+    classDef data fill:#00bcf2,stroke:#0099cc,stroke-width:2px,color:#fff
+    classDef external fill:#7fba00,stroke:#6ba700,stroke-width:2px,color:#fff
+    
+    class StaticWebApps,CDN,Widget,APIM,AppGateway,AAD,KeyVault,Functions,AppService,ContainerInstances azure
+    class OpenAI,CognitiveSearch,Language,FormRecognizer ai
+    class CosmosDB,SQLDatabase,BlobStorage,Redis data
+    class ServiceBus,EventGrid,SignalR,LogicApps,Monitor,DevOps external
+        </div>
+        
+        <div class="cost-section">
+            <h3><i class="fas fa-dollar-sign"></i> Microsoft Azure Pricing Estimate</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Compute & AI:</h4>
+                    <ul>
+                        <li>Azure Functions: $0.20/million executions</li>
+                        <li>App Service: $0.013/hour (Basic)</li>
+                        <li>Azure OpenAI: $0.002/1K tokens</li>
+                        <li>Cognitive Search: $250/month (Basic)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Storage & Data:</h4>
+                    <ul>
+                        <li>Cosmos DB: $0.25/RU/s per hour</li>
+                        <li>Blob Storage: $0.0208/GB/month</li>
+                        <li>Redis Cache: $0.149/hour (Basic)</li>
+                        <li>Service Bus: $0.05/million operations</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #0078d4; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px;">
+                <strong>Total Estimated Cost: $150-450/month</strong>
+                <p>Based on 100K queries/month with moderate traffic</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

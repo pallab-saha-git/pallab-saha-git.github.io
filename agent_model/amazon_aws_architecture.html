@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Web Services - Chatbot Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #ff9900 0%, #232f3e 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #ff9900;
+        }
+        .header h1 {
+            color: #232f3e;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .cost-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 6px solid #ff9900;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fab fa-aws"></i> Amazon Web Services</h1>
+            <h2>Chatbot Architecture with AWS Services</h2>
+        </div>
+        
+        <div class="mermaid">
+graph TB
+    subgraph "Frontend & CDN"
+        CloudFront["`**Amazon CloudFront**
+        • Global CDN
+        • Edge locations
+        • SSL certificates
+        • Custom origins`"]
+        
+        S3Website["`**Amazon S3**
+        • Static website hosting
+        • Object storage
+        • Versioning
+        • Cross-region replication`"]
+        
+        Widget["`**Chatbot Widget**
+        • React/Vue.js
+        • WebSocket support
+        • Mobile optimized`"]
+    end
+    
+    subgraph "API Gateway & Security"
+        APIGateway["`**Amazon API Gateway**
+        • REST/WebSocket APIs
+        • Rate limiting
+        • API keys
+        • Request validation`"]
+        
+        ALB["`**Application Load Balancer**
+        • Layer 7 routing
+        • SSL termination
+        • Health checks`"]
+        
+        IAM["`**AWS Identity & Access Management**
+        • Role-based access
+        • JWT validation
+        • Resource policies`"]
+        
+        SecretsManager["`**AWS Secrets Manager**
+        • API keys rotation
+        • Database credentials
+        • Encryption at rest`"]
+        
+        WAF["`**AWS Web Application Firewall**
+        • DDoS protection
+        • Bot control
+        • Custom rules`"]
+    end
+    
+    subgraph "Compute Services"
+        Lambda["`**AWS Lambda**
+        • Serverless functions
+        • Event-driven
+        • Auto-scaling
+        • Pay-per-invocation`"]
+        
+        ECS["`**Amazon Elastic Container Service**
+        • Docker containers
+        • Service discovery
+        • Auto-scaling`"]
+        
+        Fargate["`**AWS Fargate**
+        • Serverless containers
+        • No server management
+        • Pay-per-use`"]
+    end
+    
+    subgraph "AI & ML Services"
+        Bedrock["`**Amazon Bedrock**
+        • Claude 3 Sonnet/Haiku
+        • Titan models
+        • Custom models
+        • Guardrails`"]
+        
+        Kendra["`**Amazon Kendra**
+        • Intelligent search
+        • Document indexing
+        • Natural language queries
+        • FAQ support`"]
+        
+        Comprehend["`**Amazon Comprehend**
+        • Sentiment analysis
+        • Entity recognition
+        • Language detection
+        • Custom classification`"]
+        
+        Textract["`**Amazon Textract**
+        • Document analysis
+        • OCR capabilities
+        • Form data extraction
+        • Table detection`"]
+        
+        SageMaker["`**Amazon SageMaker**
+        • Custom embeddings
+        • Model training
+        • Inference endpoints
+        • Feature store`"]
+    end
+    
+    subgraph "Data & Storage"
+        DynamoDB["`**Amazon DynamoDB**
+        • NoSQL database
+        • Global tables
+        • Point-in-time recovery
+        • Auto-scaling`"]
+        
+        RDS["`**Amazon RDS**
+        • Managed PostgreSQL
+        • Multi-AZ deployment
+        • Read replicas
+        • Automated backups`"]
+        
+        S3["`**Amazon S3**
+        • Object storage
+        • Multiple storage classes
+        • Lifecycle policies
+        • Event notifications`"]
+        
+        ElastiCache["`**Amazon ElastiCache**
+        • Redis/Memcached
+        • In-memory caching
+        • Cluster mode
+        • Automatic failover`"]
+        
+        OpenSearch["`**Amazon OpenSearch**
+        • Vector search
+        • Full-text search
+        • Analytics
+        • Kibana dashboards`"]
+    end
+    
+    subgraph "Messaging & Events"
+        SQS["`**Amazon Simple Queue Service**
+        • Message queuing
+        • Dead letter queues
+        • FIFO queues
+        • Visibility timeout`"]
+        
+        SNS["`**Amazon Simple Notification Service**
+        • Pub/Sub messaging
+        • SMS/Email notifications
+        • Mobile push
+        • HTTP endpoints`"]
+        
+        EventBridge["`**Amazon EventBridge**
+        • Event routing
+        • Custom events
+        • Third-party integrations
+        • Archive and replay`"]
+    end
+    
+    subgraph "External & Monitoring"
+        Connect["`**Amazon Connect**
+        • Contact center
+        • Voice/Chat routing
+        • IVR integration
+        • Real-time metrics`"]
+        
+        CloudWatch["`**Amazon CloudWatch**
+        • Metrics and logs
+        • Custom dashboards
+        • Alarms
+        • X-Ray tracing`"]
+        
+        Pinpoint["`**Amazon Pinpoint**
+        • Multi-channel messaging
+        • Campaign management
+        • Analytics
+        • Journey orchestration`"]
+        
+        CodePipeline["`**AWS CodePipeline**
+        • CI/CD automation
+        • Source control
+        • Build and deploy
+        • Multi-stage pipelines`"]
+    end
+    
+    %% Connections
+    CloudFront --> S3Website
+    S3Website --> Widget
+    Widget --> APIGateway
+    APIGateway --> ALB
+    ALB --> IAM
+    IAM --> SecretsManager
+    APIGateway --> WAF
+    APIGateway --> Lambda
+    Lambda --> SQS
+    SQS --> ECS
+    ECS --> ElastiCache
+    ECS --> OpenSearch
+    OpenSearch --> Bedrock
+    Bedrock --> Comprehend
+    ECS --> DynamoDB
+    ECS --> Connect
+    
+    EventBridge --> Textract
+    Textract --> Kendra
+    S3 --> EventBridge
+    
+    Lambda --> CloudWatch
+    ECS --> CloudWatch
+    Connect --> Pinpoint
+    
+    %% Styling
+    classDef aws fill:#ff9900,stroke:#232f3e,stroke-width:2px,color:#000
+    classDef ai fill:#7aa116,stroke:#6a9113,stroke-width:2px,color:#fff
+    classDef data fill:#3f48cc,stroke:#363dc4,stroke-width:2px,color:#fff
+    classDef external fill:#d13212,stroke:#c42e0f,stroke-width:2px,color:#fff
+    
+    class CloudFront,S3Website,Widget,APIGateway,ALB,IAM,SecretsManager,WAF,Lambda,ECS,Fargate aws
+    class Bedrock,Kendra,Comprehend,Textract,SageMaker ai
+    class DynamoDB,RDS,S3,ElastiCache,OpenSearch data
+    class SQS,SNS,EventBridge,Connect,CloudWatch,Pinpoint,CodePipeline external
+        </div>
+        
+        <div class="cost-section">
+            <h3><i class="fas fa-dollar-sign"></i> Amazon Web Services Pricing Estimate</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Compute & AI:</h4>
+                    <ul>
+                        <li>Lambda: $0.20/million requests</li>
+                        <li>ECS Fargate: $0.04048/vCPU hour</li>
+                        <li>Bedrock (Claude): $0.008/1K tokens</li>
+                        <li>Kendra: $810/month (Developer)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Storage & Data:</h4>
+                    <ul>
+                        <li>DynamoDB: $0.25/million RRU</li>
+                        <li>S3 Standard: $0.023/GB/month</li>
+                        <li>ElastiCache: $0.017/hour (t3.micro)</li>
+                        <li>SQS: $0.40/million requests</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #232f3e; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px;">
+                <strong>Total Estimated Cost: $180-550/month</strong>
+                <p>Based on 100K queries/month with moderate traffic</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

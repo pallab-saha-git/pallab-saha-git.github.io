@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Chatbot Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Detailed Chatbot System Architecture</h1>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph "Frontend Layer"
+        WP["`**WordPress Website**
+        • Blog/Corporate Site
+        • Plugin Integration
+        • Admin Panel`"]
+        
+        HTML["`**HTML Website**
+        • Static/Custom Site  
+        • JavaScript Widget
+        • CDN Integration`"]
+        
+        Widget["`**Chatbot Widget**
+        • React/Vue.js
+        • WebSocket Connection
+        • Mobile Responsive
+        • Customizable UI`"]
+    end
+    
+    subgraph "API Gateway & Load Balancer"
+        LB["`**Load Balancer**
+        • Traffic Distribution
+        • SSL Termination
+        • Health Checks`"]
+        
+        API["`**API Gateway**
+        • Authentication
+        • Rate Limiting
+        • Request Routing
+        • CORS Handling`"]
+    end
+    
+    subgraph "Core Processing Layer"
+        Auth["`**Authentication**
+        • JWT Tokens
+        • API Keys
+        • User Sessions`"]
+        
+        Queue["`**Message Queue**
+        • Redis/RabbitMQ
+        • Async Processing
+        • Scaling Buffer`"]
+        
+        Processor["`**Chat Processor**
+        • Context Management
+        • Session Handling
+        • Response Logic`"]
+        
+        Cache["`**Cache Layer**
+        • Redis Cache
+        • Frequent Queries
+        • Response Caching`"]
+    end
+    
+    subgraph "AI & ML Layer"
+        Embedder["`**Text Embedder**
+        • Sentence Transformers
+        • all-MiniLM-L6-v2
+        • Vector Generation`"]
+        
+        VectorDB["`**Vector Database**
+        **Cloud Options:**
+        • Pinecone
+        • Weaviate Cloud
+        • Qdrant Cloud
+        
+        **Self-Hosted:**
+        • ChromaDB
+        • FAISS
+        • Milvus`"]
+        
+        LLM["`**Language Models**
+        **Cloud APIs:**
+        • GPT-3.5 Turbo ($0.0015/1K)
+        • Claude Haiku ($0.00025/1K)
+        • Gemini Nano
+        
+        **Self-Hosted:**
+        • Llama 2 7B
+        • Mistral 7B
+        • Phi-2`"]
+        
+        Confidence["`**Confidence Scorer**
+        • Response Quality
+        • Threshold: 0.7
+        • Escalation Logic`"]
+    end
+    
+    subgraph "Data Sources & Content"
+        Crawler["`**Website Crawler**
+        • Scrapy/BeautifulSoup
+        • Scheduled Crawling
+        • Content Extraction
+        • HTML Parsing`"]
+        
+        KB["`**Knowledge Base**
+        • Additional Info
+        • FAQs
+        • Product Details
+        • Company Policies`"]
+        
+        ContentDB["`**Content Database**
+        • PostgreSQL/MongoDB
+        • Structured Data
+        • Metadata Storage`"]
+    end
+    
+    subgraph "External Integrations"
+        WhatsApp["`**WhatsApp Business API**
+        **Options:**
+        • Twilio WhatsApp
+        • Meta Cloud API
+        • WhatsApp Business API
+        
+        **Triggers:**
+        • Low Confidence < 0.7
+        • User Request
+        • Complex Queries`"]
+        
+        Analytics["`**Analytics & Monitoring**
+        • Google Analytics
+        • Custom Metrics
+        • Performance Tracking
+        • Error Logging`"]
+        
+        Webhook["`**Webhooks**
+        • Real-time Events
+        • Status Updates
+        • Integration Callbacks`"]
+    end
+    
+    subgraph "Infrastructure Options"
+        Cloud["`**Cloud Architecture**
+        **Compute:**
+        • AWS Lambda
+        • Google Cloud Functions
+        • Azure Functions
+        
+        **Storage:**
+        • AWS S3
+        • Google Cloud Storage
+        
+        **Database:**
+        • AWS RDS
+        • Google Cloud SQL`"]
+        
+        SelfHosted["`**Self-Hosted Architecture**
+        **Compute:**
+        • Docker Containers
+        • Kubernetes
+        • VM Instances
+        
+        **Storage:**
+        • Local Storage
+        • NAS Systems
+        
+        **Database:**
+        • PostgreSQL
+        • Local Redis`"]
+    end
+    
+    subgraph "Security & Compliance"
+        Security["`**Security Layer**
+        • Input Validation
+        • SQL Injection Prevention
+        • XSS Protection
+        • Rate Limiting`"]
+        
+        Privacy["`**Privacy & Compliance**
+        • GDPR Compliance
+        • Data Encryption
+        • User Consent
+        • Data Deletion`"]
+    end
+    
+    %% Connections
+    WP --> Widget
+    HTML --> Widget
+    Widget --> LB
+    LB --> API
+    API --> Auth
+    Auth --> Queue
+    Queue --> Processor
+    Processor <--> Cache
+    Processor --> VectorDB
+    VectorDB --> LLM
+    LLM --> Confidence
+    Confidence --> Processor
+    Processor --> WhatsApp
+    
+    Crawler --> Embedder
+    KB --> Embedder
+    Embedder --> VectorDB
+    ContentDB --> VectorDB
+    
+    Processor --> Analytics
+    WhatsApp --> Webhook
+    API --> Security
+    Processor --> Privacy
+    
+    Cloud -.-> API
+    SelfHosted -.-> API
+    
+    %% Styling
+    classDef frontend fill:#3498db,stroke:#2c3e50,stroke-width:2px,color:#fff
+    classDef processing fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff  
+    classDef ai fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+    classDef data fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+    classDef external fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff
+    classDef infra fill:#95a5a6,stroke:#7f8c8d,stroke-width:2px,color:#fff
+    classDef security fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+    
+    class WP,HTML,Widget frontend
+    class LB,API,Auth,Queue,Processor,Cache processing
+    class Embedder,VectorDB,LLM,Confidence ai
+    class Crawler,KB,ContentDB data
+    class WhatsApp,Analytics,Webhook external
+    class Cloud,SelfHosted infra
+    class Security,Privacy security
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

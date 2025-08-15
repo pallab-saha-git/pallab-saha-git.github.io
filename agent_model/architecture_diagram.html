@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Architecture Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot System Architecture</h1>
+    <div class="diagram-container">
+        <div class="mermaid">
+graph TB
+    subgraph "Frontend Layer"
+        WP[WordPress Website]
+        HTML[HTML Website]
+        Widget[Chatbot Widget<br/>JavaScript/React]
+    end
+    
+    subgraph "API Gateway"
+        API[REST API<br/>Authentication<br/>Rate Limiting]
+    end
+    
+    subgraph "Processing Layer"
+        Queue[Message Queue<br/>Redis/RabbitMQ]
+        Processor[Chat Processor<br/>Context Management]
+    end
+    
+    subgraph "AI Layer"
+        Embedder[Text Embedder<br/>Sentence Transformers]
+        VectorDB[(Vector Database<br/>Pinecone/ChromaDB)]
+        LLM[Language Model<br/>GPT-3.5/Llama 2]
+    end
+    
+    subgraph "Data Sources"
+        Crawler[Website Crawler<br/>Scrapy/BeautifulSoup]
+        KB[(Knowledge Base<br/>Additional Info)]
+        Cache[(Redis Cache<br/>Fast Responses)]
+    end
+    
+    subgraph "External Services"
+        WhatsApp[WhatsApp API<br/>Twilio/Meta]
+    end
+    
+    WP --> Widget
+    HTML --> Widget
+    Widget --> API
+    API --> Queue
+    Queue --> Processor
+    Processor --> Cache
+    Cache -.cached.-> Processor
+    Processor --> VectorDB
+    VectorDB --> LLM
+    LLM --> Processor
+    Processor --> WhatsApp
+    Crawler --> Embedder
+    Embedder --> VectorDB
+    KB --> VectorDB
+    
+    style Widget fill:#3498db,color:#fff
+    style LLM fill:#9b59b6,color:#fff
+    style WhatsApp fill:#25D366,color:#fff
+    style VectorDB fill:#2ecc71,color:#fff
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 
