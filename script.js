@@ -180,35 +180,78 @@ class SmoothScroll {
     }
 
     setupScrollDetection() {
-        const observerOptions = { root: null, threshold: 0.5, rootMargin: '-20% 0px -20% 0px' };
+        // Use a more aggressive threshold for better detection
+        const observerOptions = { 
+            root: null, 
+            threshold: [0, 0.25, 0.5, 0.75, 1],
+            rootMargin: '-10% 0px -10% 0px' 
+        };
+        
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
+                if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
                     const sectionIndex = Array.from(this.sections).indexOf(entry.target);
-                    this.updateActiveNav(sectionIndex);
-                    this.currentSection = sectionIndex;
+                    if (sectionIndex !== -1) {
+                        this.updateActiveNav(sectionIndex);
+                        this.currentSection = sectionIndex;
+                    }
                 }
             });
         }, observerOptions);
 
-        this.sections.forEach(section => observer.observe(section));
+        // Ensure sections exist before observing
+        if (this.sections.length > 0) {
+            this.sections.forEach(section => observer.observe(section));
+        }
 
         // Set initial active state for home section
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             this.updateActiveNav(0);
-        }, 100);
+            this.currentSection = 0;
+        });
 
-        // Fallback on window scroll
-        window.addEventListener('scroll', throttle(() => {
-            let activeIndex = 0, maxVis = 0; const vh = window.innerHeight;
-            this.sections.forEach((section, i) => {
-                const r = section.getBoundingClientRect();
-                const vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
-                const ratio = vis / vh;
-                if (ratio > maxVis) { maxVis = ratio; activeIndex = i; }
+        // Enhanced fallback on window scroll with immediate execution
+        const scrollHandler = () => {
+            if (this.isScrolling) return; // Don't interfere with programmatic scrolling
+            
+            let activeIndex = 0;
+            let maxVisibility = 0;
+            const viewportHeight = window.innerHeight;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            this.sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                const sectionTop = rect.top + scrollTop;
+                const sectionHeight = section.offsetHeight;
+                
+                // Calculate how much of the section is visible
+                const visibleTop = Math.max(0, Math.min(viewportHeight, rect.bottom));
+                const visibleBottom = Math.max(0, Math.min(viewportHeight, viewportHeight - rect.top));
+                const visibleHeight = Math.max(0, visibleTop - (viewportHeight - visibleBottom));
+                const visibilityRatio = visibleHeight / Math.min(sectionHeight, viewportHeight);
+                
+                // Also consider if we're past the middle of the section
+                const sectionMiddle = sectionTop + (sectionHeight / 2);
+                const pastMiddle = scrollTop + (viewportHeight / 2) >= sectionMiddle;
+                
+                if (visibilityRatio > maxVisibility || (visibilityRatio > 0.3 && pastMiddle)) {
+                    maxVisibility = visibilityRatio;
+                    activeIndex = index;
+                }
             });
-            if (maxVis > 0.3) { this.updateActiveNav(activeIndex); this.currentSection = activeIndex; }
-        }, 100));
+            
+            if (maxVisibility > 0.1) {
+                this.updateActiveNav(activeIndex);
+                this.currentSection = activeIndex;
+            }
+        };
+        
+        // Use both throttled and immediate scroll handlers
+        window.addEventListener('scroll', throttle(scrollHandler, 50));
+        window.addEventListener('scroll', scrollHandler, { passive: true });
+        
+        // Initial call to set correct active state
+        setTimeout(scrollHandler, 100);
     }
 
     setupScrollButton() {
@@ -238,13 +281,30 @@ class SmoothScroll {
     }
 
     updateActiveNav(activeIndex) {
-        // Update dot navigation
+        // Update dot navigation with better error handling
         const dotLinks = document.querySelectorAll('.dot-nav a[href^="#"]');
+        if (dotLinks.length === 0) return;
+        
         const ids = Array.from(this.sections).map(s => `#${s.id}`);
-        dotLinks.forEach(link => {
-            const idx = ids.indexOf(link.getAttribute('href'));
-            link.classList.toggle('active', idx === activeIndex);
+        
+        dotLinks.forEach((link, index) => {
+            const href = link.getAttribute('href');
+            const sectionIndex = ids.indexOf(href);
+            const isActive = (sectionIndex === activeIndex) || (index === activeIndex);
+            
+            if (isActive) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
         });
+        
+        // Also update any other navigation elements that might exist
+        const navItems = document.querySelectorAll(`[data-section="${activeIndex}"]`);
+        const allNavItems = document.querySelectorAll('[data-section]');
+        
+        allNavItems.forEach(item => item.classList.remove('active'));
+        navItems.forEach(item => item.classList.add('active'));
     }
 }
 
@@ -574,20 +634,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Header mobile nav (removed since header is removed)
 
-    // Smooth anchor scrolling and active section tracking
-    new SmoothScroll();
+    // Initialize everything with proper timing
+    setTimeout(() => {
+        // Smooth anchor scrolling and active section tracking
+        new SmoothScroll();
 
-    // Initialize tab system
-    new TabSystem();
+        // Initialize tab system
+        new TabSystem();
 
-    // Initialize project modal
-    new ProjectModal();
+        // Initialize project modal
+        new ProjectModal();
 
-    // Initialize animation observer
-    new AnimationObserver();
+        // Initialize animation observer
+        new AnimationObserver();
 
-    // Initialize floating animation
-    new FloatingAnimation();
+        // Initialize floating animation
+        new FloatingAnimation();
+    }, 100);
+
+    // Also add a backup initialization in case of timing issues
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            // Re-initialize SmoothScroll if sections aren't working
+            const existingSmoothScroll = document.querySelector('.dot-nav .active');
+            if (!existingSmoothScroll) {
+                new SmoothScroll();
+            }
+        }, 200);
+    });
 
     // Initialize performance monitor
     new PerformanceMonitor();
