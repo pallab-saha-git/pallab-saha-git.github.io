@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Azure Multi-Agent Implementation Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .azure-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #0078d4;
+            font-weight: bold;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
+        .nav-section {
+            background: #faf9f8;
+            padding: 30px 50px;
+            border-bottom: 1px solid #edebe9;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            background: white;
+            color: #0078d4;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #0078d4;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: #0078d4;
+            color: white;
+        }
+        
+        .content-section {
+            padding: 50px;
+        }
+        
+        .step-section {
+            margin-bottom: 60px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 6px solid #0078d4;
+        }
+        
+        .step-header {
+            background: linear-gradient(135deg, #faf9f8 0%, #edebe9 100%);
+            padding: 30px;
+            border-bottom: 1px solid #edebe9;
+        }
+        
+        .step-title {
+            color: #323130;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .step-number {
+            background: #0078d4;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .step-content {
+            padding: 30px;
+        }
+        
+        .substep {
+            margin: 25px 0;
+            padding: 20px;
+            background: #faf9f8;
+            border-radius: 10px;
+            border-left: 4px solid #107c10;
+        }
+        
+        .substep h4 {
+            color: #323130;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .substep-icon {
+            color: #107c10;
+            font-size: 1.1em;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .code-header {
+            background: #2d2d30;
+            color: #cccccc;
+            padding: 10px 20px;
+            margin: -20px -20px 15px -20px;
+            font-size: 0.9em;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .powershell-block {
+            background: #012456;
+            color: #ffffff;
+        }
+        
+        .command-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .command-list li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #0078d4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff4e6 0%, #ffe6cc 100%);
+            border: 1px solid #ff8c00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%);
+            border: 1px solid #0078d4;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .enterprise-box {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e1f5fe 100%);
+            border: 2px solid #0078d4;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .enterprise-box h4 {
+            color: #0078d4;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5em; }
+            .nav-links { flex-direction: column; align-items: center; }
+            .step-title { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="azure-logo">⊞</div>
+                <h1>Microsoft Azure Implementation</h1>
+                <h2>Enterprise Multi-Agent Multi-Tenant Build Guide</h2>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-links">
+                <a href="#prerequisites" class="nav-link">📋 Prerequisites</a>
+                <a href="#azure-setup" class="nav-link">⚙️ Azure Setup</a>
+                <a href="#openai-setup" class="nav-link">🧠 OpenAI Service</a>
+                <a href="#agents" class="nav-link">🤖 Enterprise Agents</a>
+                <a href="#teams-integration" class="nav-link">💬 Teams Integration</a>
+                <a href="#deployment" class="nav-link">🚀 Deploy</a>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div id="prerequisites" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">1</span>
+                        Prerequisites & Enterprise Setup
+                    </h3>
+                    <p class="step-description">
+                        Set up your Microsoft Azure enterprise environment with proper security and compliance.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-building substep-icon"></i> Azure Account & Subscription</h4>
+                        <ul class="command-list">
+                            <li>
+                                <strong>Create Azure Account</strong>
+                                <p>Go to <a href="https://portal.azure.com" target="_blank">portal.azure.com</a> and create enterprise account</p>
+                            </li>
+                            <li>
+                                <strong>Request Azure OpenAI Access</strong>
+                                <p>Apply for Azure OpenAI service access (required for GPT-4 models)</p>
+                            </li>
+                            <li>
+                                <strong>Set up Resource Groups</strong>
+                                <p>Create: "rg-chatbot-prod", "rg-chatbot-dev", "rg-chatbot-shared"</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-terminal substep-icon"></i> Azure CLI Installation</h4>
+                        <div class="code-block powershell-block">
+                            <div class="code-header">PowerShell (Windows)</div>
+                            <pre><code># Install Azure CLI
+Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi
+Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'
+
+# Install Azure PowerShell Module
+Install-Module -Name Az -AllowClobber -Scope CurrentUser
+
+# Login to Azure
+Connect-AzAccount
+az login
+
+# Set default subscription
+az account set --subscription "Your-Subscription-Name"</code></pre>
+                        </div>
+                        
+                        <div class="code-block">
+                            <div class="code-header">macOS/Linux</div>
+                            <pre><code># macOS
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Ubuntu/Debian
+curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+sudo apt-get update && sudo apt-get install azure-cli</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="enterprise-box">
+                        <h4><i class="fas fa-shield-alt"></i> Enterprise Security Setup</h4>
+                        <div class="code-block">
+                            <div class="code-header">Azure Active Directory Configuration</div>
+                            <pre><code># Create Azure AD App Registration
+az ad app create --display-name "MultiAgent-Chatbot" \
+  --sign-in-audience "AzureADMultipleOrgs" \
+  --web-redirect-uris "https://your-domain.com/auth/callback"
+
+# Create Service Principal
+az ad sp create-for-rbac --name "chatbot-service-principal" \
+  --role "Contributor" \
+  --scopes "/subscriptions/YOUR_SUBSCRIPTION_ID"
+
+# Enable Multi-Factor Authentication (Required for enterprise)
+# This must be done through Azure Portal -> Azure AD -> Security -> MFA</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Enterprise Requirements</h4>
+                        <ul>
+                            <li><strong>Azure OpenAI Access:</strong> Requires approval process (can take 5-10 business days)</li>
+                            <li><strong>Compliance:</strong> Ensure your organization meets SOC 2, HIPAA, or other required standards</li>
+                            <li><strong>Network Security:</strong> Plan for VNet integration and private endpoints</li>
+                            <li><strong>Budget Management:</strong> Set up cost alerts and spending limits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="azure-setup" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">2</span>
+                        Core Azure Services Setup
+                    </h3>
+                    <p class="step-description">
+                        Configure the essential Azure services for enterprise-grade multi-agent architecture.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-database substep-icon"></i> Azure Cosmos DB Setup</h4>
+                        <div class="code-block">
+                            <div class="code-header">Create Multi-Tenant Database</div>
+                            <pre><code># Create Cosmos DB Account
+az cosmosdb create \
+  --name "chatbot-cosmosdb" \
+  --resource-group "rg-chatbot-prod" \
+  --kind "GlobalDocumentDB" \
+  --locations regionName="East US" failoverPriority=0 isZoneRedundant=False \
+  --locations regionName="West US 2" failoverPriority=1 isZoneRedundant=False \
+  --default-consistency-level "Session" \
+  --enable-multiple-write-locations true
+
+# Create Database
+az cosmosdb sql database create \
+  --account-name "chatbot-cosmosdb" \
+  --resource-group "rg-chatbot-prod" \
+  --name "ChatbotDB"
+
+# Create Containers for Multi-Tenancy
+az cosmosdb sql container create \
+  --account-name "chatbot-cosmosdb" \
+  --resource-group "rg-chatbot-prod" \
+  --database-name "ChatbotDB" \
+  --name "Tenants" \
+  --partition-key-path "/tenantId" \
+  --throughput 400
+
+az cosmosdb sql container create \
+  --account-name "chatbot-cosmosdb" \
+  --resource-group "rg-chatbot-prod" \
+  --database-name "ChatbotDB" \
+  --name "Conversations" \
+  --partition-key-path "/tenantId" \
+  --throughput 400</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-search substep-icon"></i> Azure Cognitive Search</h4>
+                        <div class="code-block">
+                            <div class="code-header">Enterprise Search Service</div>
+                            <pre><code># Create Cognitive Search Service
+az search service create \
+  --name "chatbot-search" \
+  --resource-group "rg-chatbot-prod" \
+  --sku "Basic" \
+  --partition-count 1 \
+  --replica-count 1 \
+  --location "East US"
+
+# Get Admin Keys
+az search admin-key show \
+  --service-name "chatbot-search" \
+  --resource-group "rg-chatbot-prod"</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-key substep-icon"></i> Azure Key Vault</h4>
+                        <div class="code-block">
+                            <div class="code-header">Secrets Management</div>
+                            <pre><code># Create Key Vault
+az keyvault create \
+  --name "chatbot-keyvault" \
+  --resource-group "rg-chatbot-prod" \
+  --location "East US" \
+  --enable-soft-delete true \
+  --enable-purge-protection true \
+  --sku "premium"
+
+# Store OpenAI API Key
+az keyvault secret set \
+  --vault-name "chatbot-keyvault" \
+  --name "OpenAI-API-Key" \
+  --value "YOUR_OPENAI_API_KEY"
+
+# Store Cosmos DB Connection String
+az keyvault secret set \
+  --vault-name "chatbot-keyvault" \
+  --name "CosmosDB-ConnectionString" \
+  --value "$(az cosmosdb keys list --name chatbot-cosmosdb --resource-group rg-chatbot-prod --type connection-strings --query 'connectionStrings[0].connectionString' -o tsv)"</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-cloud substep-icon"></i> App Service & Function Apps</h4>
+                        <div class="code-block">
+                            <div class="code-header">Application Hosting</div>
+                            <pre><code># Create App Service Plan
+az appservice plan create \
+  --name "chatbot-app-plan" \
+  --resource-group "rg-chatbot-prod" \
+  --sku "P1V2" \
+  --is-linux true
+
+# Create Function App for Agents
+az functionapp create \
+  --name "chatbot-agents" \
+  --resource-group "rg-chatbot-prod" \
+  --plan "chatbot-app-plan" \
+  --storage-account "chatbotstorage" \
+  --runtime "python" \
+  --runtime-version "3.9" \
+  --functions-version "4"
+
+# Create Web App for Admin Dashboard
+az webapp create \
+  --name "chatbot-admin" \
+  --resource-group "rg-chatbot-prod" \
+  --plan "chatbot-app-plan" \
+  --runtime "NODE|18-lts"</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="enterprise-box">
+                        <h4><i class="fas fa-network-wired"></i> Enterprise Networking</h4>
+                        <div class="code-block">
+                            <div class="code-header">VNet and Private Endpoints</div>
+                            <pre><code># Create Virtual Network
+az network vnet create \
+  --name "chatbot-vnet" \
+  --resource-group "rg-chatbot-prod" \
+  --address-prefixes "10.0.0.0/16" \
+  --subnet-name "default" \
+  --subnet-prefixes "10.0.0.0/24"
+
+# Create Private Endpoint for Cosmos DB
+az network private-endpoint create \
+  --name "cosmosdb-private-endpoint" \
+  --resource-group "rg-chatbot-prod" \
+  --vnet-name "chatbot-vnet" \
+  --subnet "default" \
+  --private-connection-resource-id "/subscriptions/YOUR_SUBSCRIPTION_ID/resourceGroups/rg-chatbot-prod/providers/Microsoft.DocumentDB/databaseAccounts/chatbot-cosmosdb" \
+  --group-id "Sql" \
+  --connection-name "cosmosdb-connection"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="openai-setup" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">3</span>
+                        Azure OpenAI Service Setup
+                    </h3>
+                    <p class="step-description">
+                        Configure Azure OpenAI with GPT-4 models and content filtering for enterprise use.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-brain substep-icon"></i> Create OpenAI Resource</h4>
+                        <div class="code-block">
+                            <div class="code-header">Azure OpenAI Service</div>
+                            <pre><code># Create Azure OpenAI Resource
+az cognitiveservices account create \
+  --name "chatbot-openai" \
+  --resource-group "rg-chatbot-prod" \
+  --location "East US" \
+  --kind "OpenAI" \
+  --sku "S0" \
+  --custom-domain "chatbot-openai"
+
+# Deploy GPT-4 Model
+az cognitiveservices account deployment create \
+  --name "chatbot-openai" \
+  --resource-group "rg-chatbot-prod" \
+  --deployment-name "gpt-4" \
+  --model-name "gpt-4" \
+  --model-version "0613" \
+  --model-format "OpenAI" \
+  --sku-capacity 10 \
+  --sku-name "Standard"
+
+# Deploy GPT-3.5 Turbo for cost optimization
+az cognitiveservices account deployment create \
+  --name "chatbot-openai" \
+  --resource-group "rg-chatbot-prod" \
+  --deployment-name "gpt-35-turbo" \
+  --model-name "gpt-35-turbo" \
+  --model-version "0613" \
+  --model-format "OpenAI" \
+  --sku-capacity 20 \
+  --sku-name "Standard"</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-shield-alt substep-icon"></i> Content Filtering & Safety</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python - Content Filter Configuration</div>
+                            <pre><code class="language-python">import openai
+import os
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+# Configure Azure OpenAI
+credential = DefaultAzureCredential()
+key_vault_url = "https://chatbot-keyvault.vault.azure.net/"
+secret_client = SecretClient(vault_url=key_vault_url, credential=credential)
+
+# Get OpenAI configuration
+openai_key = secret_client.get_secret("OpenAI-API-Key").value
+openai_endpoint = "https://chatbot-openai.openai.azure.com/"
+
+openai.api_type = "azure"
+openai.api_base = openai_endpoint
+openai.api_version = "2023-12-01-preview"
+openai.api_key = openai_key
+
+def create_safe_completion(messages, agent_type="support"):
+    """Create completion with enterprise content filtering"""
+    
+    # Content filter settings
+    content_filter_config = {
+        "hate": {"filtered": True, "severity": "medium"},
+        "self_harm": {"filtered": True, "severity": "medium"},
+        "sexual": {"filtered": True, "severity": "medium"},
+        "violence": {"filtered": True, "severity": "medium"}
+    }
+    
+    try:
+        response = openai.ChatCompletion.create(
+            engine="gpt-4" if agent_type == "technical" else "gpt-35-turbo",
+            messages=messages,
+            max_tokens=500,
+            temperature=0.3,
+            content_filter_config=content_filter_config,
+            user=f"tenant_{agent_type}"  # For usage tracking
+        )
+        
+        return {
+            "response": response.choices[0].message.content,
+            "filtered": response.get("content_filter_results", {}),
+            "usage": response.usage
+        }
+        
+    except openai.error.InvalidRequestError as e:
+        if "content_filter" in str(e):
+            return {
+                "response": "I'm sorry, but I can't provide a response to that request due to content policy restrictions.",
+                "filtered": True,
+                "error": "content_filtered"
+            }
+        raise e</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-chart-line substep-icon"></i> Usage Monitoring</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python - Token Usage Tracking</div>
+                            <pre><code class="language-python">from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
+import logging
+
+# Configure Application Insights
+configure_azure_monitor(
+    connection_string="InstrumentationKey=YOUR_APP_INSIGHTS_KEY"
+)
+
+tracer = trace.get_tracer(__name__)
+
+class TokenUsageTracker:
+    def __init__(self):
+        self.logger = logging.getLogger("token_usage")
+        
+    def log_usage(self, tenant_id, agent_type, prompt_tokens, completion_tokens, total_cost):
+        """Log token usage for billing and monitoring"""
+        
+        with tracer.start_as_current_span("openai_usage") as span:
+            span.set_attributes({
+                "tenant.id": tenant_id,
+                "agent.type": agent_type,
+                "tokens.prompt": prompt_tokens,
+                "tokens.completion": completion_tokens,
+                "cost.total": total_cost
+            })
+            
+            self.logger.info(f"OpenAI Usage - Tenant: {tenant_id}, Agent: {agent_type}, "
+                           f"Tokens: {prompt_tokens + completion_tokens}, Cost: ${total_cost:.4f}")
+    
+    def calculate_cost(self, model, prompt_tokens, completion_tokens):
+        """Calculate cost based on current Azure OpenAI pricing"""
+        
+        pricing = {
+            "gpt-4": {"prompt": 0.03, "completion": 0.06},  # per 1K tokens
+            "gpt-35-turbo": {"prompt": 0.002, "completion": 0.002}
+        }
+        
+        rates = pricing.get(model, pricing["gpt-35-turbo"])
+        
+        prompt_cost = (prompt_tokens / 1000) * rates["prompt"]
+        completion_cost = (completion_tokens / 1000) * rates["completion"]
+        
+        return prompt_cost + completion_cost</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="agents" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">4</span>
+                        Enterprise Multi-Agent Development
+                    </h3>
+                    <p class="step-description">
+                        Build enterprise-grade agents with Azure AD integration and advanced features.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-robot substep-icon"></i> Bot Framework Integration</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python - Bot Framework Agent Router</div>
+                            <pre><code class="language-python">from botbuilder.core import ActivityHandler, TurnContext, MessageFactory
+from botbuilder.schema import ChannelAccount, Activity
+from azure.cosmos import CosmosClient
+import openai
+import json
+
+class EnterpriseAgentRouter(ActivityHandler):
+    def __init__(self, cosmos_client, openai_config):
+        self.cosmos_client = cosmos_client
+        self.openai_config = openai_config
+        self.database = cosmos_client.get_database_client("ChatbotDB")
+        self.tenants_container = self.database.get_container_client("Tenants")
+        self.conversations_container = self.database.get_container_client("Conversations")
+        
+    async def on_message_activity(self, turn_context: TurnContext):
+        """Route messages to appropriate enterprise agents"""
+        
+        # Extract user information
+        user_id = turn_context.activity.from_property.id
+        channel_id = turn_context.activity.channel_id
+        tenant_id = await self.get_tenant_from_context(turn_context)
+        
+        # Get user message
+        user_message = turn_context.activity.text
+        
+        # Classify intent and route to agent
+        routing_decision = await self.route_to_agent(user_message, tenant_id)
+        agent_type = routing_decision["agent_type"]
+        
+        # Get response from specialized agent
+        if agent_type == "customer_service":
+            response = await self.customer_service_agent(user_message, tenant_id, user_id)
+        elif agent_type == "sales":
+            response = await self.enterprise_sales_agent(user_message, tenant_id, user_id)
+        elif agent_type == "technical":
+            response = await self.technical_support_agent(user_message, tenant_id, user_id)
+        elif agent_type == "teams_escalation":
+            response = await self.teams_escalation_agent(user_message, tenant_id, user_id)
+        else:
+            response = await self.default_agent(user_message, tenant_id, user_id)
+        
+        # Save conversation
+        await self.save_conversation(tenant_id, user_id, user_message, response, agent_type)
+        
+        # Send response
+        await turn_context.send_activity(MessageFactory.text(response["text"]))
+        
+    async def customer_service_agent(self, message, tenant_id, user_id):
+        """Enterprise customer service with CRM integration"""
+        
+        # Get customer context from Dynamics 365
+        customer_context = await self.get_customer_context(user_id, tenant_id)
+        
+        # Get tenant knowledge base
+        knowledge_base = await self.get_tenant_knowledge(tenant_id)
+        
+        system_message = f"""
+        You are an enterprise customer service agent for {await self.get_tenant_name(tenant_id)}.
+        
+        Customer Information:
+        {json.dumps(customer_context, indent=2)}
+        
+        Company Knowledge Base:
+        {knowledge_base}
+        
+        Instructions:
+        - Provide professional, empathetic customer service
+        - Reference customer history when relevant
+        - Follow company policies and procedures
+        - Escalate to human agents for complex issues
+        - Maintain detailed interaction logs
+        """
+        
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": message}
+        ]
+        
+        response = await self.get_openai_response(messages, "customer_service")
+        
+        return {
+            "text": response["response"],
+            "agent_type": "customer_service",
+            "escalation_needed": response.get("escalation_needed", False)
+        }
+    
+    async def enterprise_sales_agent(self, message, tenant_id, user_id):
+        """B2B sales agent with CRM integration"""
+        
+        # Get lead information
+        lead_info = await self.get_lead_information(user_id, tenant_id)
+        
+        # Get product catalog
+        products = await self.get_tenant_products(tenant_id)
+        
+        system_message = f"""
+        You are a B2B sales representative for {await self.get_tenant_name(tenant_id)}.
+        
+        Lead Information:
+        {json.dumps(lead_info, indent=2)}
+        
+        Available Products/Services:
+        {products}
+        
+        Instructions:
+        - Focus on enterprise solutions and value propositions
+        - Understand customer's business needs and pain points
+        - Provide ROI calculations and business cases
+        - Schedule demos and consultations when appropriate
+        - Integrate with Dynamics 365 for lead management
+        - Follow BANT qualification methodology
+        """
+        
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": message}
+        ]
+        
+        response = await self.get_openai_response(messages, "sales")
+        
+        # Update lead score in CRM
+        await self.update_lead_score(user_id, tenant_id, message, response)
+        
+        return {
+            "text": response["response"],
+            "agent_type": "sales",
+            "lead_score": response.get("lead_score", 0)
+        }
+    
+    async def teams_escalation_agent(self, message, tenant_id, user_id):
+        """Handle escalation to Microsoft Teams"""
+        
+        # Create Teams adaptive card
+        teams_card = {
+            "type": "AdaptiveCard",
+            "version": "1.3",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Customer Escalation",
+                    "weight": "Bolder",
+                    "size": "Medium"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": f"Customer: {user_id}",
+                    "spacing": "None"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": f"Tenant: {tenant_id}",
+                    "spacing": "None"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": f"Message: {message}",
+                    "wrap": True,
+                    "spacing": "Medium"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "Take Over Chat",
+                    "data": {
+                        "action": "take_over",
+                        "user_id": user_id,
+                        "tenant_id": tenant_id
+                    }
+                }
+            ]
+        }
+        
+        # Send to Teams channel
+        await self.send_teams_notification(teams_card, tenant_id)
+        
+        return {
+            "text": "I'm connecting you with one of our specialists who will be with you shortly. They'll have access to our full conversation history.",
+            "agent_type": "teams_escalation",
+            "escalated": True
+        }</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="enterprise-box">
+                        <h4><i class="fas fa-users"></i> Azure AD B2B Integration</h4>
+                        <div class="code-block">
+                            <div class="code-header">Multi-Tenant Authentication</div>
+                            <pre><code class="language-python">from azure.identity import DefaultAzureCredential
+from msgraph.core import GraphServiceClient
+import msal
+
+class AzureADIntegration:
+    def __init__(self):
+        self.credential = DefaultAzureCredential()
+        self.graph_client = GraphServiceClient(
+            credentials=self.credential,
+            scopes=['https://graph.microsoft.com/.default']
+        )
+    
+    async def authenticate_user(self, token, tenant_id):
+        """Authenticate user with Azure AD B2B"""
+        
+        try:
+            # Validate token and get user information
+            user_info = await self.graph_client.me.get()
+            
+            return {
+                "user_id": user_info.id,
+                "display_name": user_info.display_name,
+                "email": user_info.mail,
+                "tenant_id": tenant_id,
+                "roles": await self.get_user_roles(user_info.id, tenant_id)
+            }
+            
+        except Exception as e:
+            raise AuthenticationError(f"Failed to authenticate user: {str(e)}")
+    
+    async def get_user_roles(self, user_id, tenant_id):
+        """Get user roles for authorization"""
+        
+        # Check user's group memberships for role-based access
+        memberships = await self.graph_client.users[user_id].member_of.get()
+        
+        roles = []
+        for membership in memberships.value:
+            if membership.display_name.startswith(f"ChatBot-{tenant_id}"):
+                role = membership.display_name.split("-")[-1]
+                roles.append(role)
+        
+        return roles</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="teams-integration" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">5</span>
+                        Microsoft Teams Integration
+                    </h3>
+                    <p class="step-description">
+                        Integrate with Microsoft Teams for seamless collaboration and escalation workflows.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-comments substep-icon"></i> Teams Bot Registration</h4>
+                        <div class="code-block">
+                            <div class="code-header">Teams App Manifest</div>
+                            <pre><code class="language-json">{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.14/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.14",
+  "version": "1.0.0",
+  "id": "your-app-id",
+  "packageName": "com.company.chatbot",
+  "developer": {
+    "name": "Your Company",
+    "websiteUrl": "https://your-company.com",
+    "privacyUrl": "https://your-company.com/privacy",
+    "termsOfUseUrl": "https://your-company.com/terms"
+  },
+  "icons": {
+    "color": "chatbot-icon-color.png",
+    "outline": "chatbot-icon-outline.png"
+  },
+  "name": {
+    "short": "Enterprise Chatbot",
+    "full": "Multi-Tenant Enterprise Chatbot"
+  },
+  "description": {
+    "short": "AI-powered enterprise customer service",
+    "full": "Multi-agent chatbot with enterprise integration and escalation workflows"
+  },
+  "accentColor": "#0078D4",
+  "bots": [
+    {
+      "botId": "your-bot-id",
+      "scopes": ["personal", "team", "groupchat"],
+      "supportsCalling": false,
+      "supportsVideo": false,
+      "supportsFiles": true,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupchat"],
+          "commands": [
+            {
+              "title": "Help",
+              "description": "Get help using the chatbot"
+            },
+            {
+              "title": "Escalate",
+              "description": "Escalate to human agent"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "your-bot-id",
+      "commands": [
+        {
+          "id": "searchKnowledgeBase",
+          "type": "query",
+          "title": "Search Knowledge Base",
+          "description": "Search the company knowledge base",
+          "initialRun": false,
+          "parameters": [
+            {
+              "name": "searchQuery",
+              "title": "Search Query",
+              "description": "Enter your search terms"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "your-domain.com",
+    "*.azurewebsites.net"
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-bell substep-icon"></i> Teams Notifications</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python - Teams Notification System</div>
+                            <pre><code class="language-python">from botbuilder.core import CardFactory
+from botbuilder.schema.teams import TeamsChannelData
+import pymsteams
+
+class TeamsNotificationService:
+    def __init__(self, webhook_url, app_id, app_password):
+        self.webhook_url = webhook_url
+        self.app_id = app_id
+        self.app_password = app_password
+    
+    async def send_escalation_notification(self, customer_info, conversation_summary, tenant_id):
+        """Send escalation notification to Teams channel"""
+        
+        # Create adaptive card for escalation
+        escalation_card = {
+            "type": "AdaptiveCard",
+            "version": "1.3",
+            "body": [
+                {
+                    "type": "Container",
+                    "style": "attention",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "🚨 Customer Escalation Required",
+                            "weight": "Bolder",
+                            "size": "Large"
+                        }
+                    ]
+                },
+                {
+                    "type": "FactSet",
+                    "facts": [
+                        {"title": "Customer:", "value": customer_info.get("name", "Unknown")},
+                        {"title": "Email:", "value": customer_info.get("email", "N/A")},
+                        {"title": "Tenant:", "value": tenant_id},
+                        {"title": "Priority:", "value": customer_info.get("priority", "Medium")},
+                        {"title": "Issue Type:", "value": conversation_summary.get("category", "General")}
+                    ]
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "**Conversation Summary:**",
+                    "weight": "Bolder",
+                    "spacing": "Medium"
+                },
+                {
+                    "type": "TextBlock",
+                    "text": conversation_summary.get("summary", "No summary available"),
+                    "wrap": True,
+                    "maxLines": 3
+                }
+            ],
+            "actions": [
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "View Full Conversation",
+                    "url": f"https://your-admin-portal.com/conversations/{customer_info.get('session_id')}"
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Take Over",
+                    "data": {
+                        "action": "take_over",
+                        "session_id": customer_info.get("session_id"),
+                        "customer_id": customer_info.get("id")
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "Assign to Expert",
+                    "data": {
+                        "action": "assign",
+                        "session_id": customer_info.get("session_id")
+                    }
+                }
+            ]
+        }
+        
+        # Send to Teams webhook
+        teams_message = pymsteams.connectorcard(self.webhook_url)
+        teams_message.title("Customer Escalation")
+        teams_message.text("A customer requires immediate attention")
+        teams_message.addSection(pymsteams.cardsection())
+        
+        # Add adaptive card as attachment
+        attachment = CardFactory.adaptive_card(escalation_card)
+        teams_message.payload = attachment.content
+        
+        teams_message.send()
+    
+    async def send_daily_summary(self, tenant_metrics):
+        """Send daily performance summary to Teams"""
+        
+        summary_card = {
+            "type": "AdaptiveCard",
+            "version": "1.3",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "📊 Daily Chatbot Summary",
+                    "weight": "Bolder",
+                    "size": "Large"
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": f"**{tenant_metrics['total_conversations']}**",
+                                    "size": "Large",
+                                    "horizontalAlignment": "Center"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Conversations",
+                                    "horizontalAlignment": "Center",
+                                    "spacing": "None"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": f"**{tenant_metrics['satisfaction_score']}%**",
+                                    "size": "Large",
+                                    "horizontalAlignment": "Center"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Satisfaction",
+                                    "horizontalAlignment": "Center",
+                                    "spacing": "None"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": f"**{tenant_metrics['escalations']}**",
+                                    "size": "Large",
+                                    "horizontalAlignment": "Center"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": "Escalations",
+                                    "horizontalAlignment": "Center",
+                                    "spacing": "None"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        teams_message = pymsteams.connectorcard(self.webhook_url)
+        teams_message.title("Daily Chatbot Summary")
+        teams_message.payload = summary_card
+        teams_message.send()</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h4><i class="fas fa-info-circle"></i> Next Steps</h4>
+                <p><strong>Continue with deployment:</strong> Your Azure enterprise multi-agent system is ready for deployment. The next phase covers production deployment, monitoring setup, and go-live procedures.</p>
+                <ul>
+                    <li>Deploy to Azure App Service with staging slots</li>
+                    <li>Configure Application Insights monitoring</li>
+                    <li>Set up Azure DevOps CI/CD pipelines</li>
+                    <li>Implement comprehensive testing strategies</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div id="deployment" class="step-section">
+        <div class="step-header">
+            <h3 class="step-title">
+                <span class="step-number">6</span>
+                Azure DevOps CI/CD & Production Deployment
+            </h3>
+            <p class="step-description">
+                Set up enterprise-grade CI/CD pipelines with Azure DevOps and deploy to production with staging slots.
+            </p>
+        </div>
+        <div class="step-content">
+            <div class="substep">
+                <h4><i class="fas fa-code-branch substep-icon"></i> Azure DevOps Pipeline Setup</h4>
+                <div class="code-block">
+                    <div class="code-header">azure-pipelines.yml - Enterprise CI/CD Pipeline</div>
+                    <pre><code class="language-yaml">trigger:
+  branches:
+    include:
+    - main
+    - develop
+  paths:
+    include:
+    - backend/*
+    - frontend/*
+
+variables:
+  azureSubscription: 'your-service-connection'
+  resourceGroupName: 'rg-chatbot-prod'
+  appServiceName: 'chatbot-agents-prod'
+  containerRegistry: 'chatbotregistry.azurecr.io'
+  
+stages:
+- stage: Build
+  displayName: 'Build and Test'
+  jobs:
+  - job: BuildBackend
+    displayName: 'Build Backend'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.11'
+        displayName: 'Use Python 3.11'
+        
+    - script: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+      displayName: 'Install dependencies'
+      
+    - script: |
+        cd backend
+        python -m pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
+      displayName: 'Run tests with coverage'
+      
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'backend/coverage.xml'
+        
+  - job: BuildFrontend
+    displayName: 'Build Frontend'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '18.x'
+        displayName: 'Use Node.js 18.x'
+        
+    - script: |
+        cd frontend
+        npm ci
+        npm run test:ci
+        npm run build
+      displayName: 'Build and test frontend'
+      
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'frontend/test-results.xml'
+
+- stage: Security
+  displayName: 'Security Scanning'
+  dependsOn: Build
+  jobs:
+  - job: SecurityScan
+    displayName: 'Security Analysis'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Install Security Scanner'
+      inputs:
+        command: 'custom'
+        custom: 'tool'
+        arguments: 'install --global security-scan'
+        
+    - script: |
+        # Run OWASP dependency check
+        dependency-check --project chatbot --scan backend/ --format XML
+      displayName: 'OWASP Dependency Check'
+
+- stage: DeployStaging
+  displayName: 'Deploy to Staging'
+  dependsOn: Security
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  jobs:
+  - deployment: DeployToStaging
+    displayName: 'Deploy to Staging'
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'staging'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: $(azureSubscription)
+              appType: 'webAppContainer'
+              WebAppName: '$(appServiceName)-staging'
+              DockerNamespace: $(containerRegistry)
+              DockerRepository: 'chatbot-backend'
+              DockerImageTag: '$(Build.BuildId)'
+              
+          - task: AzureAppServiceManage@0
+            inputs:
+              azureSubscription: $(azureSubscription)
+              Action: 'Start Azure App Service'
+              WebAppName: '$(appServiceName)-staging'
+
+- stage: DeployProduction
+  displayName: 'Deploy to Production'
+  dependsOn: Security
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: DeployToProduction
+    displayName: 'Deploy to Production'
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureAppServiceManage@0
+            displayName: 'Create Staging Slot'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              Action: 'Create or Update Slot'
+              WebAppName: $(appServiceName)
+              ResourceGroupName: $(resourceGroupName)
+              Slot: 'staging'
+              
+          - task: AzureRmWebAppDeployment@4
+            displayName: 'Deploy to Staging Slot'
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: $(azureSubscription)
+              appType: 'webAppContainer'
+              WebAppName: $(appServiceName)
+              deployToSlotOrASE: true
+              slotName: 'staging'
+              DockerNamespace: $(containerRegistry)
+              DockerRepository: 'chatbot-backend'
+              DockerImageTag: '$(Build.BuildId)'
+              
+          - task: AzureAppServiceManage@0
+            displayName: 'Swap Staging to Production'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              Action: 'Swap Slots'
+              WebAppName: $(appServiceName)
+              ResourceGroupName: $(resourceGroupName)
+              SourceSlot: 'staging'
+              
+- stage: PostDeployment
+  displayName: 'Post-Deployment Tests'
+  dependsOn: DeployProduction
+  jobs:
+  - job: SmokeTests
+    displayName: 'Production Smoke Tests'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        # Wait for deployment to be ready
+        sleep 60
+        
+        # Run smoke tests
+        curl -f https://$(appServiceName).azurewebsites.net/health || exit 1
+        echo "Production health check passed"
+        
+        # Test agent endpoints
+        curl -f https://$(appServiceName).azurewebsites.net/api/agents/health || exit 1
+        echo "Agent health check passed"
+      displayName: 'Run smoke tests'</code></pre>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-cloud substep-icon"></i> Production Infrastructure with ARM Templates</h4>
+                <div class="code-block">
+                    <div class="code-header">infrastructure/production.json - ARM Template</div>
+                    <pre><code class="language-json">{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServicePlanName": {
+      "type": "string",
+      "defaultValue": "chatbot-plan-prod"
+    },
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "chatbot-agents-prod"
+    },
+    "cosmosDbAccountName": {
+      "type": "string",
+      "defaultValue": "chatbot-cosmosdb-prod"
+    },
+    "cognitiveSearchName": {
+      "type": "string",
+      "defaultValue": "chatbot-search-prod"
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "chatbot-keyvault-prod"
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('appServicePlanName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "P1v3",
+        "tier": "PremiumV3",
+        "size": "P1v3",
+        "family": "Pv3",
+        "capacity": 2
+      },
+      "kind": "linux",
+      "properties": {
+        "reserved": true,
+        "perSiteScaling": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('webAppName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "kind": "app,linux,container",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "linuxFxVersion": "DOCKER|chatbotregistry.azurecr.io/chatbot-backend:latest",
+          "alwaysOn": true,
+          "minTlsVersion": "1.2",
+          "ftpsState": "Disabled",
+          "appSettings": [
+            {
+              "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+              "value": "false"
+            },
+            {
+              "name": "ENVIRONMENT",
+              "value": "production"
+            },
+            {
+              "name": "AZURE_OPENAI_ENDPOINT",
+              "value": "[concat('https://', parameters('webAppName'), '-openai.openai.azure.com/')]"
+            }
+          ]
+        },
+        "httpsOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/slots",
+      "apiVersion": "2021-02-01",
+      "name": "[concat(parameters('webAppName'), '/staging')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+      ],
+      "kind": "app,linux,container",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "linuxFxVersion": "DOCKER|chatbotregistry.azurecr.io/chatbot-backend:latest",
+          "alwaysOn": true
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2021-04-15",
+      "name": "[parameters('cosmosDbAccountName')]",
+      "location": "[variables('location')]",
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session"
+        },
+        "locations": [
+          {
+            "locationName": "[variables('location')]",
+            "failoverPriority": 0
+          }
+        ],
+        "databaseAccountOfferType": "Standard",
+        "enableAutomaticFailover": true,
+        "enableMultipleWriteLocations": false,
+        "backupPolicy": {
+          "type": "Periodic",
+          "periodicModeProperties": {
+            "backupIntervalInMinutes": 240,
+            "backupRetentionIntervalInHours": 720
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "2020-08-01",
+      "name": "[parameters('cognitiveSearchName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "basic"
+      },
+      "properties": {
+        "replicaCount": 1,
+        "partitionCount": 1,
+        "hostingMode": "default"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "premium"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "enabledForDeployment": true,
+        "enabledForTemplateDeployment": true,
+        "enabledForDiskEncryption": true,
+        "enableSoftDelete": true,
+        "enablePurgeProtection": true,
+        "accessPolicies": []
+      }
+    }
+  ]
+}</code></pre>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-chart-line substep-icon"></i> Application Insights Monitoring</h4>
+                <div class="code-block">
+                    <div class="code-header">Python - Application Insights Integration</div>
+                    <pre><code class="language-python">from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace, metrics
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+import logging
+
+# Configure Application Insights
+configure_azure_monitor(
+    connection_string="your-application-insights-connection-string"
+)
+
+# Get tracer and meter
+tracer = trace.get_tracer(__name__)
+meter = metrics.get_meter(__name__)
+
+# Custom metrics
+agent_response_counter = meter.create_counter(
+    name="agent_responses_total",
+    description="Total number of agent responses",
+    unit="1"
+)
+
+agent_confidence_histogram = meter.create_histogram(
+    name="agent_confidence_score",
+    description="Distribution of agent confidence scores",
+    unit="1"
+)
+
+class AzureMonitoring:
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        
+    def track_agent_response(self, agent_type: str, confidence: float, 
+                           response_time: float, tenant_id: str):
+        """Track agent response metrics"""
+        
+        with tracer.start_as_current_span("agent_response") as span:
+            span.set_attributes({
+                "agent.type": agent_type,
+                "agent.confidence": confidence,
+                "tenant.id": tenant_id,
+                "response.time_ms": response_time
+            })
+            
+            # Record metrics
+            agent_response_counter.add(1, {
+                "agent_type": agent_type,
+                "tenant_id": tenant_id
+            })
+            
+            agent_confidence_histogram.record(confidence, {
+                "agent_type": agent_type
+            })
+            
+            # Log for Application Insights
+            self.logger.info(
+                f"Agent response: {agent_type}, confidence: {confidence:.2f}, "
+                f"time: {response_time:.2f}ms, tenant: {tenant_id}"
+            )
+    
+    def track_escalation(self, agent_type: str, reason: str, tenant_id: str):
+        """Track when conversations are escalated"""
+        
+        with tracer.start_as_current_span("agent_escalation") as span:
+            span.set_attributes({
+                "agent.type": agent_type,
+                "escalation.reason": reason,
+                "tenant.id": tenant_id
+            })
+            
+            self.logger.warning(
+                f"Escalation: {agent_type} -> {reason}, tenant: {tenant_id}"
+            )
+    
+    def track_teams_integration(self, action: str, success: bool, tenant_id: str):
+        """Track Teams integration events"""
+        
+        with tracer.start_as_current_span("teams_integration") as span:
+            span.set_attributes({
+                "teams.action": action,
+                "teams.success": success,
+                "tenant.id": tenant_id
+            })
+            
+            level = logging.INFO if success else logging.ERROR
+            self.logger.log(
+                level,
+                f"Teams {action}: {'success' if success else 'failed'}, "
+                f"tenant: {tenant_id}"
+            )
+
+# Initialize monitoring
+monitoring = AzureMonitoring()</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="step-section">
+        <div class="step-header">
+            <h3 class="step-title">
+                <span class="step-number">7</span>
+                Detailed Week-by-Week Enterprise Implementation
+            </h3>
+            <p class="step-description">
+                Complete 8-week implementation timeline tailored for enterprise Azure deployment.
+            </p>
+        </div>
+        <div class="step-content">
+            <div class="substep">
+                <h4><i class="fas fa-calendar substep-icon"></i> Week 3-4: Enterprise Agent Development</h4>
+                <div class="command-list">
+                    <li>
+                        <strong>Day 15-17: Bot Framework Setup & Agent Router</strong>
+                        <p>Configure Bot Framework, implement enterprise agent routing with Azure AD integration</p>
+                    </li>
+                    <li>
+                        <strong>Day 18-20: Customer Service Agent</strong>
+                        <p>Build enterprise customer service agent with Dynamics 365 integration and audit trails</p>
+                    </li>
+                    <li>
+                        <strong>Day 21-23: Enterprise Sales Agent</strong>
+                        <p>Develop B2B sales agent with CRM integration, territory management, complex workflows</p>
+                    </li>
+                    <li>
+                        <strong>Day 24-26: Technical & Teams Agents</strong>
+                        <p>Create technical support agent and Teams collaboration agent with native integration</p>
+                    </li>
+                    <li>
+                        <strong>Day 27-28: Enterprise Security & Compliance</strong>
+                        <p>Implement compliance logging, audit trails, data governance, role-based access</p>
+                    </li>
+                    <li>
+                        <strong>Week 4 Deliverable: ✅ Enterprise-grade multi-agent system</strong>
+                        <p>Fully compliant agents with enterprise integration and security features</p>
+                    </li>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-desktop substep-icon"></i> Week 5-6: Enterprise Frontend & Testing</h4>
+                <div class="command-list">
+                    <li>
+                        <strong>Day 29-31: Enterprise Widget Development</strong>
+                        <p>Build enterprise widget with SSO, custom branding, compliance features</p>
+                    </li>
+                    <li>
+                        <strong>Day 32-34: Power BI Analytics Dashboard</strong>
+                        <p>Create comprehensive analytics dashboard with Power BI integration</p>
+                    </li>
+                    <li>
+                        <strong>Day 35-37: Teams App Development</strong>
+                        <p>Develop native Teams application with adaptive cards and workflows</p>
+                    </li>
+                    <li>
+                        <strong>Day 38-40: Enterprise Testing Strategy</strong>
+                        <p>Implement comprehensive testing: security testing, compliance validation, load testing</p>
+                    </li>
+                    <li>
+                        <strong>Day 41-42: Performance & Security Optimization</strong>
+                        <p>Security hardening, performance tuning, compliance verification</p>
+                    </li>
+                    <li>
+                        <strong>Week 6 Deliverable: ✅ Enterprise frontend with compliance</strong>
+                        <p>Production-ready frontend with security, compliance, and enterprise features</p>
+                    </li>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-rocket substep-icon"></i> Week 7-8: Enterprise Deployment & Launch</h4>
+                <div class="command-list">
+                    <li>
+                        <strong>Day 43-45: Production Infrastructure Deployment</strong>
+                        <p>Deploy with ARM templates, configure enterprise networking, SSL, compliance controls</p>
+                    </li>
+                    <li>
+                        <strong>Day 46-48: Azure DevOps CI/CD Implementation</strong>
+                        <p>Configure enterprise CI/CD with security gates, compliance checks, staging slots</p>
+                    </li>
+                    <li>
+                        <strong>Day 49-51: Enterprise Security Audit</strong>
+                        <p>Security assessment, penetration testing, compliance verification, access review</p>
+                    </li>
+                    <li>
+                        <strong>Day 52-54: Enterprise Monitoring & Governance</strong>
+                        <p>Application Insights setup, enterprise alerting, governance policies, audit logging</p>
+                    </li>
+                    <li>
+                        <strong>Day 55-56: Enterprise Launch & Training</strong>
+                        <p>Go-live procedures, administrator training, user onboarding, support documentation</p>
+                    </li>
+                    <li>
+                        <strong>Week 8 Deliverable: ✅ Live enterprise system with full compliance</strong>
+                        <p>Production system serving enterprise customers with full security and compliance</p>
+                    </li>
+                </div>
+            </div>
+            
+            <div class="enterprise-box">
+                <h4><i class="fas fa-chart-line"></i> Enterprise Success Metrics</h4>
+                <p>Your Azure implementation will provide:</p>
+                <ul>
+                    <li><strong>99.9% Uptime SLA</strong> with multi-region deployment</li>
+                    <li><strong>SOC 2 Type II Compliance</strong> built-in</li>
+                    <li><strong>Advanced Analytics</strong> with Power BI integration</li>
+                    <li><strong>Enterprise Security</strong> with Azure AD and Key Vault</li>
+                    <li><strong>Global Scale</strong> with Azure's worldwide infrastructure</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box">
+                <h4><i class="fas fa-shield-alt"></i> Enterprise Considerations</h4>
+                <ul>
+                    <li><strong>Compliance:</strong> Ensure all regulatory requirements are met before go-live</li>
+                    <li><strong>Security:</strong> Regular security reviews and penetration testing</li>
+                    <li><strong>Training:</strong> Comprehensive administrator and user training programs</li>
+                    <li><strong>Support:</strong> Establish enterprise support procedures and escalation paths</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
