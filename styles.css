@@ -15,10 +15,12 @@
 
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
+html{overflow-x:hidden;overflow-y:auto;overscroll-behavior-x:none}
 body{
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     background:var(--bg-dark);
     color:var(--text);
+    overflow-x:hidden;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
 }
@@ -37,7 +39,7 @@ body::before{
 .main-background{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
 
 /* Layout */
-.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.container{max-width:1100px;margin:0 auto;padding-inline:clamp(2%,4vw,5%);overflow-wrap:anywhere}
 .section{padding:80px 0;position:relative}
 .section-head{margin-bottom:24px}
 .section-head h2{font-family:'Orbitron',monospace;font-size:2rem;letter-spacing:.5px;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 20px rgba(0,247,255,.25)}
@@ -250,15 +252,11 @@ body::before{
     .social-list svg{width:13px;height:13px}
 }
 
-/* Prevent content overlapping fixed social-list / dot-nav by adding safe side paddings */
-:root{--rail-left:88px;--rail-right:88px}
-@media (max-width:1200px){:root{--rail-left:74px;--rail-right:74px}}
-@media (max-width:900px){:root{--rail-left:62px;--rail-right:62px}}
-@media (max-width:600px){:root{--rail-left:52px;--rail-right:52px}}
-
-/* Apply side rails to main content area */
-body{padding-left:var(--rail-left);padding-right:var(--rail-right)}
-/* Keep hero background elements unaffected; fixed nav stays at viewport edges */
+/* Neutralize prior side rail paddings to avoid squeezing */
+:root{--rail-left:0px;--rail-right:0px}
+body{padding-left:0;padding-right:0}
+/* Ensure fixed rails remain fixed and not influenced by transforms of parents */
+.dot-nav,.social-list{position:fixed;will-change:transform;contain:layout paint;pointer-events:auto}
 
 /* Mobile-first readability: hide side rails and give content full width */
 @media (max-width:900px){
@@ -266,7 +264,7 @@ body{padding-left:var(--rail-left);padding-right:var(--rail-right)}
     :root{--rail-left:0px;--rail-right:0px}
     body{padding-left:0;padding-right:0}
     /* Slightly tighter sections and container padding on mobile for comfort */
-    .container{padding:0 16px}
+    .container{padding-inline:clamp(2%,4vw,5%)}
     .section{padding:64px 0}
     /* Allow hero kicker text to wrap on small screens */
     .hero-kicker{white-space:normal}
