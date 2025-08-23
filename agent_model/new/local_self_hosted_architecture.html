@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local/Self-Hosted - Chatbot Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #27ae60;
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .cost-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 6px solid #27ae60;
+        }
+        .mermaid {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-server"></i> Local/Self-Hosted Infrastructure</h1>
+            <h2>On-Premise Chatbot Architecture</h2>
+        </div>
+        
+        <div class="mermaid">
+graph TB
+    subgraph "Frontend & Web Server"
+        Nginx["`**Nginx Web Server**
+        • Reverse proxy
+        • SSL termination
+        • Static file serving
+        • Load balancing`"]
+        
+        StaticFiles["`**Static Website Files**
+        • HTML/CSS/JS
+        • Chatbot widget
+        • CDN alternative
+        • Local hosting`"]
+        
+        Widget["`**Chatbot Widget**
+        • Vanilla JS/React
+        • WebSocket connection
+        • Local assets`"]
+    end
+    
+    subgraph "API Gateway & Security"
+        Kong["`**Kong API Gateway**
+        • Rate limiting
+        • Authentication
+        • Request routing
+        • Plugin ecosystem`"]
+        
+        Traefik["`**Traefik**
+        • Automatic service discovery
+        • SSL certificates
+        • Load balancing
+        • Docker integration`"]
+        
+        OAuth["`**OAuth2 Proxy**
+        • JWT validation
+        • Session management
+        • OIDC integration`"]
+        
+        Vault["`**HashiCorp Vault**
+        • Secrets management
+        • API key storage
+        • Certificate authority`"]
+    end
+    
+    subgraph "Container Orchestration"
+        Docker["`**Docker Containers**
+        • Application isolation
+        • Easy deployment
+        • Resource management
+        • Volume mounting`"]
+        
+        K8s["`**Kubernetes**
+        • Pod orchestration
+        • Service discovery
+        • Auto-scaling
+        • Rolling updates`"]
+        
+        DockerCompose["`**Docker Compose**
+        • Multi-container apps
+        • Development setup
+        • Simple orchestration`"]
+    end
+    
+    subgraph "Application Layer"
+        FastAPI["`**FastAPI Application**
+        • Python backend
+        • Async support
+        • Auto documentation
+        • High performance`"]
+        
+        Express["`**Express.js/Node.js**
+        • JavaScript backend
+        • Real-time features
+        • NPM ecosystem
+        • WebSocket support`"]
+        
+        Flask["`**Flask Application**
+        • Lightweight Python
+        • Microservices
+        • RESTful APIs
+        • Simple deployment`"]
+    end
+    
+    subgraph "AI & ML Stack"
+        Ollama["`**Ollama**
+        • Local LLM hosting
+        • Llama 2, Mistral
+        • GPU acceleration
+        • REST API`"]
+        
+        LlamaIndex["`**LlamaIndex**
+        • Data framework
+        • Document indexing
+        • Query engine
+        • Local RAG`"]
+        
+        ChromaDB["`**ChromaDB**
+        • Vector database
+        • Similarity search
+        • Local embeddings
+        • Python integration`"]
+        
+        HuggingFace["`**Hugging Face Transformers**
+        • Sentence transformers
+        • Local embeddings
+        • Model fine-tuning
+        • CPU/GPU support`"]
+        
+        FAISS["`**FAISS**
+        • Vector similarity search
+        • High performance
+        • GPU acceleration
+        • Facebook AI research`"]
+    end
+    
+    subgraph "Data Storage"
+        PostgreSQL["`**PostgreSQL**
+        • Relational database
+        • ACID compliance
+        • Full-text search
+        • JSON support`"]
+        
+        MongoDB["`**MongoDB**
+        • Document database
+        • Flexible schema
+        • GridFS storage
+        • Aggregation pipeline`"]
+        
+        Redis["`**Redis**
+        • In-memory cache
+        • Session storage
+        • Pub/Sub messaging
+        • Persistence options`"]
+        
+        MinIO["`**MinIO**
+        • S3-compatible storage
+        • Object storage
+        • High performance
+        • Kubernetes native`"]
+    end
+    
+    subgraph "Message Queue & Events"
+        RabbitMQ["`**RabbitMQ**
+        • Message broker
+        • AMQP protocol
+        • Reliable delivery
+        • Management UI`"]
+        
+        ApacheKafka["`**Apache Kafka**
+        • Event streaming
+        • High throughput
+        • Distributed logs
+        • Real-time processing`"]
+        
+        Celery["`**Celery**
+        • Distributed task queue
+        • Background jobs
+        • Retry mechanisms
+        • Monitoring`"]
+    end
+    
+    subgraph "Monitoring & Logging"
+        Prometheus["`**Prometheus**
+        • Metrics collection
+        • Time series DB
+        • Alert manager
+        • Service discovery`"]
+        
+        Grafana["`**Grafana**
+        • Visualization
+        • Dashboards
+        • Alerting
+        • Multiple data sources`"]
+        
+        ELK["`**ELK Stack**
+        • Elasticsearch
+        • Logstash
+        • Kibana
+        • Log analysis`"]
+        
+        Jaeger["`**Jaeger**
+        • Distributed tracing
+        • Performance monitoring
+        • Service dependencies`"]
+    end
+    
+    subgraph "External Integrations"
+        Webhook["`**Custom Webhook Server**
+        • WhatsApp integration
+        • SMS gateways
+        • Email notifications
+        • Custom APIs`"]
+        
+        TwilioLocal["`**Twilio SDK**
+        • WhatsApp Business API
+        • SMS services
+        • Voice calls
+        • Programmable messaging`"]
+    end
+    
+    %% Connections
+    Nginx --> StaticFiles
+    StaticFiles --> Widget
+    Widget --> Kong
+    Kong --> Traefik
+    Traefik --> OAuth
+    OAuth --> Vault
+    Kong --> FastAPI
+    FastAPI --> RabbitMQ
+    RabbitMQ --> Docker
+    Docker --> Redis
+    Docker --> ChromaDB
+    ChromaDB --> Ollama
+    Ollama --> HuggingFace
+    FastAPI --> PostgreSQL
+    FastAPI --> Webhook
+    
+    K8s --> LlamaIndex
+    LlamaIndex --> FAISS
+    MinIO --> ApacheKafka
+    
+    FastAPI --> Prometheus
+    Docker --> Prometheus
+    Prometheus --> Grafana
+    Webhook --> TwilioLocal
+    
+    %% Styling
+    classDef local fill:#27ae60,stroke:#1e8449,stroke-width:2px,color:#fff
+    classDef ai fill:#8e44ad,stroke:#7d3c98,stroke-width:2px,color:#fff
+    classDef data fill:#2980b9,stroke:#2471a3,stroke-width:2px,color:#fff
+    classDef external fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+    classDef monitoring fill:#34495e,stroke:#2c3e50,stroke-width:2px,color:#fff
+    
+    class Nginx,StaticFiles,Widget,Kong,Traefik,OAuth,Vault,Docker,K8s,DockerCompose,FastAPI,Express,Flask local
+    class Ollama,LlamaIndex,ChromaDB,HuggingFace,FAISS ai
+    class PostgreSQL,MongoDB,Redis,MinIO data
+    class RabbitMQ,ApacheKafka,Celery,Webhook,TwilioLocal external
+    class Prometheus,Grafana,ELK,Jaeger monitoring
+        </div>
+        
+        <div class="cost-section">
+            <h3><i class="fas fa-dollar-sign"></i> Local/Self-Hosted Cost Analysis</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>Infrastructure Costs:</h4>
+                    <ul>
+                        <li>Server Hardware: $200-500/month</li>
+                        <li>GPU for AI (RTX 4090): $1,600 one-time</li>
+                        <li>Network/Internet: $50-100/month</li>
+                        <li>Backup Storage: $20-50/month</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Operational Costs:</h4>
+                    <ul>
+                        <li>Electricity: $50-150/month</li>
+                        <li>Maintenance Time: $500-2000/month</li>
+                        <li>Software Licenses: $0 (Open Source)</li>
+                        <li>SSL Certificates: $0-200/year</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #2c3e50; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px;">
+                <strong>Total Monthly Cost: $320-800/month</strong>
+                <p>Plus initial hardware investment ($2,000-5,000)</p>
+                <div style="margin-top: 15px; padding: 15px; background: #27ae60; border-radius: 5px;">
+                    <strong>Benefits:</strong> Complete data control, no API limits, customizable, privacy-first
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #ecf0f1; border-radius: 12px; padding: 25px; margin: 30px 0;">
+            <h3><i class="fas fa-tools"></i> Recommended Tech Stack</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <h4>🐳 Container Setup</h4>
+                    <p>Docker + Docker Compose for easy deployment and management</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <h4>🤖 AI Models</h4>
+                    <p>Ollama + Llama 2 7B for cost-effective local AI</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <h4>🗄️ Vector Database</h4>
+                    <p>ChromaDB for local vector storage and search</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <h4>📊 Monitoring</h4>
+                    <p>Prometheus + Grafana for comprehensive monitoring</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

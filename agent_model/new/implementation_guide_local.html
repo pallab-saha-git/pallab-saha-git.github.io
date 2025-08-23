@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local/Self-Hosted Multi-Agent Implementation Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            color: white;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .local-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
+        .nav-section {
+            background: #f8f9fa;
+            padding: 30px 50px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            background: white;
+            color: #27ae60;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #27ae60;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .content-section {
+            padding: 50px;
+        }
+        
+        .step-section {
+            margin-bottom: 60px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 6px solid #27ae60;
+        }
+        
+        .step-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .step-title {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .step-number {
+            background: #27ae60;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .step-content {
+            padding: 30px;
+        }
+        
+        .substep {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .substep h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .substep-icon {
+            color: #3498db;
+            font-size: 1.1em;
+        }
+        
+        .code-block {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .code-header {
+            background: #1e1e1e;
+            color: #27ae60;
+            padding: 10px 20px;
+            margin: -20px -20px 15px -20px;
+            font-size: 0.9em;
+            border-bottom: 1px solid #3e3e42;
+            font-weight: bold;
+        }
+        
+        .docker-block {
+            background: #0db7ed;
+            color: #ffffff;
+        }
+        
+        .command-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .command-list li {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffd93d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 1px solid #17a2b8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .privacy-box {
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            border: 2px solid #27ae60;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .privacy-box h4 {
+            color: #27ae60;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+        }
+        
+        .hardware-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .spec-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .spec-card h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .spec-card .spec-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+        
+        .spec-card .spec-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5em; }
+            .nav-links { flex-direction: column; align-items: center; }
+            .step-title { font-size: 1.8em; }
+            .hardware-specs { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="local-logo">🏠</div>
+                <h1>Local/Self-Hosted Implementation</h1>
+                <h2>Privacy-First Multi-Agent Multi-Tenant Build Guide</h2>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-links">
+                <a href="#prerequisites" class="nav-link">📋 Prerequisites</a>
+                <a href="#infrastructure" class="nav-link">🖥️ Infrastructure</a>
+                <a href="#ai-stack" class="nav-link">🧠 AI Stack</a>
+                <a href="#agents" class="nav-link">🤖 Privacy Agents</a>
+                <a href="#security" class="nav-link">🔒 Security</a>
+                <a href="#deployment" class="nav-link">🚀 Deploy</a>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <div id="prerequisites" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">1</span>
+                        Hardware & Software Prerequisites
+                    </h3>
+                    <p class="step-description">
+                        Set up the physical and virtual infrastructure for your self-hosted multi-agent system.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-server substep-icon"></i> Recommended Hardware Specifications</h4>
+                        <div class="hardware-specs">
+                            <div class="spec-card">
+                                <h5>CPU</h5>
+                                <div class="spec-value">16+ cores</div>
+                                <div class="spec-desc">Intel Xeon or AMD EPYC</div>
+                            </div>
+                            <div class="spec-card">
+                                <h5>RAM</h5>
+                                <div class="spec-value">64+ GB</div>
+                                <div class="spec-desc">DDR4 ECC Memory</div>
+                            </div>
+                            <div class="spec-card">
+                                <h5>Storage</h5>
+                                <div class="spec-value">2+ TB</div>
+                                <div class="spec-desc">NVMe SSD RAID 1</div>
+                            </div>
+                            <div class="spec-card">
+                                <h5>GPU (Optional)</h5>
+                                <div class="spec-value">24+ GB</div>
+                                <div class="spec-desc">NVIDIA RTX 4090 or A100</div>
+                            </div>
+                            <div class="spec-card">
+                                <h5>Network</h5>
+                                <div class="spec-value">10 Gbps</div>
+                                <div class="spec-desc">Redundant connections</div>
+                            </div>
+                            <div class="spec-card">
+                                <h5>Backup</h5>
+                                <div class="spec-value">10+ TB</div>
+                                <div class="spec-desc">NAS or tape backup</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-linux substep-icon"></i> Operating System Setup</h4>
+                        <div class="code-block">
+                            <div class="code-header">Ubuntu Server 22.04 LTS Installation</div>
+                            <pre><code class="language-bash"># Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install essential packages
+sudo apt install -y \
+    curl \
+    wget \
+    git \
+    vim \
+    htop \
+    iftop \
+    iotop \
+    screen \
+    tmux \
+    ufw \
+    fail2ban \
+    unzip \
+    build-essential \
+    software-properties-common \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    lsb-release
+
+# Configure firewall
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw --force enable
+
+# Install Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+newgrp docker
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-python substep-icon"></i> Python Environment Setup</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python & Virtual Environment</div>
+                            <pre><code class="language-bash"># Install Python 3.11
+sudo add-apt-repository ppa:deadsnakes/ppa -y
+sudo apt update
+sudo apt install -y python3.11 python3.11-venv python3.11-dev python3-pip
+
+# Set Python 3.11 as default
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+
+# Install pip for Python 3.11
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+
+# Install virtual environment
+python3 -m pip install virtualenv
+
+# Create project directory
+mkdir -p /opt/chatbot
+cd /opt/chatbot
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install base packages
+pip install --upgrade pip setuptools wheel
+pip install \
+    fastapi \
+    uvicorn \
+    pydantic \
+    sqlalchemy \
+    psycopg2-binary \
+    redis \
+    celery \
+    transformers \
+    torch \
+    sentence-transformers \
+    chromadb \
+    ollama \
+    python-multipart \
+    python-jose \
+    passlib \
+    bcrypt \
+    python-dotenv \
+    requests \
+    aiofiles \
+    prometheus-client</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="privacy-box">
+                        <h4><i class="fas fa-shield-alt"></i> Privacy & Security Advantages</h4>
+                        <ul>
+                            <li><strong>Complete Data Control:</strong> All data stays on your infrastructure</li>
+                            <li><strong>No External API Calls:</strong> AI models run locally without internet dependency</li>
+                            <li><strong>Customizable Security:</strong> Implement organization-specific security policies</li>
+                            <li><strong>Compliance Flexibility:</strong> Meet any regulatory requirement (HIPAA, SOX, etc.)</li>
+                            <li><strong>Air-Gapped Option:</strong> Can operate completely offline if needed</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="infrastructure" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">2</span>
+                        Core Infrastructure Setup
+                    </h3>
+                    <p class="step-description">
+                        Deploy the foundational services using Docker Compose for easy management and scaling.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-file-code substep-icon"></i> Docker Compose Configuration</h4>
+                        <div class="code-block">
+                            <div class="code-header">docker-compose.yml</div>
+                            <pre><code class="language-yaml">version: '3.8'
+
+services:
+  # Nginx Load Balancer & Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./static:/var/www/static:ro
+    depends_on:
+      - api-gateway
+      - admin-dashboard
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # Kong API Gateway
+  kong:
+    image: kong:3.4-alpine
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    volumes:
+      - ./kong/kong.yml:/kong/declarative/kong.yml:ro
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    networks:
+      - chatbot-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: chatbot_db
+      POSTGRES_USER: chatbot_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
+
+  # Redis Cache & Session Store
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # ChromaDB Vector Database
+  chromadb:
+    image: chromadb/chroma:latest
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+      - PERSIST_DIRECTORY=/chroma/chroma
+    volumes:
+      - chromadb_data:/chroma/chroma
+    ports:
+      - "8002:8000"
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # Ollama AI Model Server
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # Multi-Agent API Server
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://chatbot_user:${POSTGRES_PASSWORD}@postgres:5432/chatbot_db
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - CHROMADB_URL=http://chromadb:8000
+      - OLLAMA_URL=http://ollama:11434
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+      - chromadb
+      - ollama
+      - minio
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # Admin Dashboard
+  admin-dashboard:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_API_URL=http://api-gateway:8080
+      - REACT_APP_WEBSOCKET_URL=ws://api-gateway:8080/ws
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+  # HashiCorp Vault for Secrets
+  vault:
+    image: vault:latest
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault_data:/vault/data
+      - ./vault/config:/vault/config:ro
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_ROOT_TOKEN}
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+    networks:
+      - chatbot-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  chromadb_data:
+  ollama_data:
+  minio_data:
+  prometheus_data:
+  grafana_data:
+  vault_data:
+
+networks:
+  chatbot-network:
+    driver: bridge</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-cog substep-icon"></i> Environment Configuration</h4>
+                        <div class="code-block">
+                            <div class="code-header">.env</div>
+                            <pre><code class="language-bash"># Database
+POSTGRES_PASSWORD=your_super_secure_postgres_password_2024
+
+# Redis
+REDIS_PASSWORD=your_super_secure_redis_password_2024
+
+# MinIO Object Storage
+MINIO_ROOT_USER=minioadmin
+MINIO_ROOT_PASSWORD=your_super_secure_minio_password_2024
+
+# Application
+SECRET_KEY=your_super_secure_secret_key_for_jwt_tokens_2024
+ENCRYPTION_KEY=your_32_character_encryption_key_here
+
+# Monitoring
+GRAFANA_PASSWORD=your_grafana_admin_password_2024
+
+# Security
+VAULT_ROOT_TOKEN=your_vault_root_token_2024
+
+# AI Models
+OLLAMA_MODELS=llama2:7b,mistral:7b,phi:2.7b
+
+# Backup
+BACKUP_SCHEDULE="0 2 * * *"  # Daily at 2 AM
+BACKUP_RETENTION_DAYS=30</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-rocket substep-icon"></i> Deploy Infrastructure</h4>
+                        <div class="code-block">
+                            <div class="code-header">Deployment Commands</div>
+                            <pre><code class="language-bash"># Create project structure
+mkdir -p /opt/chatbot/{backend,frontend,nginx,kong,postgres,prometheus,grafana,vault,logs,uploads,static}
+cd /opt/chatbot
+
+# Download the configuration files
+# (You would create these based on the docker-compose.yml above)
+
+# Generate secure passwords
+export POSTGRES_PASSWORD=$(openssl rand -base64 32)
+export REDIS_PASSWORD=$(openssl rand -base64 32)
+export MINIO_ROOT_PASSWORD=$(openssl rand -base64 32)
+export SECRET_KEY=$(openssl rand -base64 64)
+export GRAFANA_PASSWORD=$(openssl rand -base64 16)
+export VAULT_ROOT_TOKEN=$(openssl rand -base64 32)
+
+# Save to .env file
+cat > .env << EOF
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+REDIS_PASSWORD=$REDIS_PASSWORD
+MINIO_ROOT_USER=minioadmin
+MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
+SECRET_KEY=$SECRET_KEY
+GRAFANA_PASSWORD=$GRAFANA_PASSWORD
+VAULT_ROOT_TOKEN=$VAULT_ROOT_TOKEN
+OLLAMA_MODELS=llama2:7b,mistral:7b,phi:2.7b
+BACKUP_SCHEDULE="0 2 * * *"
+BACKUP_RETENTION_DAYS=30
+EOF
+
+# Set secure permissions
+chmod 600 .env
+
+# Start the infrastructure
+docker-compose up -d
+
+# Check service status
+docker-compose ps
+
+# View logs
+docker-compose logs -f api-gateway</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h4><i class="fas fa-info-circle"></i> Infrastructure Benefits</h4>
+                        <ul>
+                            <li><strong>Docker Compose:</strong> Easy deployment and management of all services</li>
+                            <li><strong>Scalable Design:</strong> Each service can be scaled independently</li>
+                            <li><strong>Monitoring Built-in:</strong> Prometheus and Grafana for comprehensive monitoring</li>
+                            <li><strong>Security First:</strong> Vault for secrets management and encrypted communications</li>
+                            <li><strong>Local AI:</strong> Ollama for running LLMs without external dependencies</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="ai-stack" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">3</span>
+                        Local AI Stack Setup
+                    </h3>
+                    <p class="step-description">
+                        Configure local AI models using Ollama, ChromaDB, and Sentence Transformers for complete privacy.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-brain substep-icon"></i> Ollama Model Installation</h4>
+                        <div class="code-block">
+                            <div class="code-header">Install and Configure AI Models</div>
+                            <pre><code class="language-bash"># Access the Ollama container
+docker exec -it chatbot_ollama_1 bash
+
+# Install recommended models for different use cases
+ollama pull llama2:7b          # General purpose, good balance
+ollama pull llama2:13b         # More capable, requires more resources
+ollama pull mistral:7b         # Fast and efficient
+ollama pull phi:2.7b           # Smallest, fastest for simple queries
+ollama pull codellama:7b       # Specialized for code and technical support
+
+# List installed models
+ollama list
+
+# Test model functionality
+ollama run llama2:7b "Hello, how can I help you today?"
+
+# Exit container
+exit
+
+# Test API access from host
+curl -X POST http://localhost:11434/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama2:7b",
+    "prompt": "Explain what a chatbot is in simple terms.",
+    "stream": false
+  }'</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-database substep-icon"></i> ChromaDB Vector Database Setup</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python - ChromaDB Client</div>
+                            <pre><code class="language-python">import chromadb
+from sentence_transformers import SentenceTransformer
+import json
+import logging
+from typing import List, Dict, Optional
+
+class LocalVectorDB:
+    def __init__(self, chromadb_url: str = "http://localhost:8002"):
+        self.client = chromadb.HttpClient(host="localhost", port=8002)
+        self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
+        self.logger = logging.getLogger(__name__)
+        
+    def create_tenant_collection(self, tenant_id: str) -> bool:
+        """Create a collection for tenant's knowledge base"""
+        
+        try:
+            collection_name = f"tenant_{tenant_id.replace('-', '_')}"
+            
+            # Create collection with metadata filtering
+            collection = self.client.create_collection(
+                name=collection_name,
+                metadata={"tenant_id": tenant_id, "type": "knowledge_base"}
+            )
+            
+            self.logger.info(f"Created collection for tenant {tenant_id}")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error creating collection for tenant {tenant_id}: {str(e)}")
+            return False
+    
+    def add_knowledge_document(self, tenant_id: str, document: Dict) -> bool:
+        """Add a document to tenant's knowledge base"""
+        
+        try:
+            collection_name = f"tenant_{tenant_id.replace('-', '_')}"
+            collection = self.client.get_collection(collection_name)
+            
+            # Generate embedding for the document
+            document_text = f"{document.get('title', '')} {document.get('content', '')}"
+            embedding = self.embedder.encode(document_text).tolist()
+            
+            # Add document to collection
+            collection.add(
+                embeddings=[embedding],
+                documents=[document.get('content', '')],
+                metadatas=[{
+                    "title": document.get('title', ''),
+                    "category": document.get('category', 'general'),
+                    "tenant_id": tenant_id,
+                    "created_at": document.get('created_at', ''),
+                    "doc_id": document.get('id', '')
+                }],
+                ids=[f"{tenant_id}_{document.get('id', 'unknown')}"]
+            )
+            
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error adding document for tenant {tenant_id}: {str(e)}")
+            return False
+    
+    def search_knowledge(self, tenant_id: str, query: str, max_results: int = 5) -> List[Dict]:
+        """Search tenant's knowledge base"""
+        
+        try:
+            collection_name = f"tenant_{tenant_id.replace('-', '_')}"
+            collection = self.client.get_collection(collection_name)
+            
+            # Generate query embedding
+            query_embedding = self.embedder.encode(query).tolist()
+            
+            # Search collection
+            results = collection.query(
+                query_embeddings=[query_embedding],
+                n_results=max_results,
+                where={"tenant_id": tenant_id}
+            )
+            
+            # Format results
+            formatted_results = []
+            for i, doc in enumerate(results['documents'][0]):
+                metadata = results['metadatas'][0][i]
+                distance = results['distances'][0][i]
+                
+                formatted_results.append({
+                    "content": doc,
+                    "title": metadata.get('title', 'Untitled'),
+                    "category": metadata.get('category', 'general'),
+                    "relevance_score": 1.0 - distance,  # Convert distance to similarity
+                    "doc_id": metadata.get('doc_id', '')
+                })
+            
+            return formatted_results
+            
+        except Exception as e:
+            self.logger.error(f"Error searching knowledge for tenant {tenant_id}: {str(e)}")
+            return []
+    
+    def get_collection_stats(self, tenant_id: str) -> Dict:
+        """Get statistics for tenant's collection"""
+        
+        try:
+            collection_name = f"tenant_{tenant_id.replace('-', '_')}"
+            collection = self.client.get_collection(collection_name)
+            
+            return {
+                "name": collection_name,
+                "count": collection.count(),
+                "tenant_id": tenant_id
+            }
+            
+        except Exception as e:
+            return {"error": str(e)}
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize vector database
+    vector_db = LocalVectorDB()
+    
+    # Create collection for a tenant
+    tenant_id = "example-company"
+    vector_db.create_tenant_collection(tenant_id)
+    
+    # Add sample documents
+    sample_docs = [
+        {
+            "id": "doc1",
+            "title": "Product Features",
+            "content": "Our chatbot supports multi-language conversations, integrates with WhatsApp, and provides 24/7 customer support.",
+            "category": "product"
+        },
+        {
+            "id": "doc2", 
+            "title": "Pricing Information",
+            "content": "We offer flexible pricing plans starting at $99/month for small businesses up to $999/month for enterprise.",
+            "category": "pricing"
+        }
+    ]
+    
+    for doc in sample_docs:
+        vector_db.add_knowledge_document(tenant_id, doc)
+    
+    # Test search
+    results = vector_db.search_knowledge(tenant_id, "What are the pricing options?")
+    print(json.dumps(results, indent=2))</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="substep">
+                        <h4><i class="fas fa-cog substep-icon"></i> Local AI Service Integration</h4>
+                        <div class="code-block">
+                            <div class="code-header">Python - Local AI Service</div>
+                            <pre><code class="language-python">import requests
+import json
+import asyncio
+from typing import List, Dict, Optional
+import logging
+
+class LocalAIService:
+    def __init__(self, ollama_url: str = "http://localhost:11434"):
+        self.ollama_url = ollama_url
+        self.logger = logging.getLogger(__name__)
+        
+        # Model selection strategy
+        self.model_strategy = {
+            'simple': 'phi:2.7b',           # Fast for simple queries
+            'general': 'mistral:7b',        # Balanced performance
+            'complex': 'llama2:13b',        # Best for complex reasoning
+            'technical': 'codellama:7b'     # Specialized for technical queries
+        }
+    
+    def select_model(self, query: str, agent_type: str) -> str:
+        """Select the best model based on query complexity and agent type"""
+        
+        # Technical agent always uses code model
+        if agent_type == 'technical':
+            return self.model_strategy['technical']
+        
+        # Analyze query complexity
+        word_count = len(query.split())
+        has_technical_terms = any(term in query.lower() for term in [
+            'api', 'integration', 'code', 'development', 'technical', 'error'
+        ])
+        
+        if has_technical_terms:
+            return self.model_strategy['technical']
+        elif word_count > 50 or '?' in query and len(query) > 100:
+            return self.model_strategy['complex']
+        elif word_count > 20:
+            return self.model_strategy['general']
+        else:
+            return self.model_strategy['simple']
+    
+    async def generate_response(self, messages: List[Dict], agent_type: str = 'support') -> Dict:
+        """Generate response using local Ollama models"""
+        
+        try:
+            # Convert messages to single prompt
+            prompt = self._build_prompt(messages)
+            
+            # Select appropriate model
+            model = self.select_model(prompt, agent_type)
+            
+            # Generate response
+            response = await self._ollama_generate(model, prompt)
+            
+            if response['success']:
+                return {
+                    'response': response['text'],
+                    'model_used': model,
+                    'success': True,
+                    'tokens': response.get('tokens', 0),
+                    'eval_time': response.get('eval_time', 0)
+                }
+            else:
+                # Fallback to simpler model if primary fails
+                fallback_model = self.model_strategy['simple']
+                fallback_response = await self._ollama_generate(fallback_model, prompt)
+                
+                return {
+                    'response': fallback_response.get('text', 'I apologize, but I encountered an error processing your request.'),
+                    'model_used': fallback_model,
+                    'success': fallback_response.get('success', False),
+                    'fallback_used': True
+                }
+                
+        except Exception as e:
+            self.logger.error(f"Error generating response: {str(e)}")
+            return {
+                'response': 'I apologize, but I encountered a technical error. Please try again.',
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def _ollama_generate(self, model: str, prompt: str) -> Dict:
+        """Call Ollama API to generate response"""
+        
+        try:
+            payload = {
+                "model": model,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "temperature": 0.3,
+                    "top_p": 0.9,
+                    "max_tokens": 500
+                }
+            }
+            
+            response = requests.post(
+                f"{self.ollama_url}/api/generate",
+                json=payload,
+                timeout=60  # 60 second timeout for complex queries
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return {
+                    'text': result.get('response', ''),
+                    'success': True,
+                    'tokens': result.get('eval_count', 0),
+                    'eval_time': result.get('eval_duration', 0) / 1e9  # Convert to seconds
+                }
+            else:
+                return {
+                    'text': '',
+                    'success': False,
+                    'error': f"HTTP {response.status_code}: {response.text}"
+                }
+                
+        except requests.exceptions.Timeout:
+            return {
+                'text': 'The response is taking longer than expected. Please try a simpler question.',
+                'success': False,
+                'error': 'timeout'
+            }
+        except Exception as e:
+            return {
+                'text': '',
+                'success': False,
+                'error': str(e)
+            }
+    
+    def _build_prompt(self, messages: List[Dict]) -> str:
+        """Convert chat messages to a single prompt for Ollama"""
+        
+        prompt_parts = []
+        
+        for message in messages:
+            role = message.get('role', 'user')
+            content = message.get('content', '')
+            
+            if role == 'system':
+                prompt_parts.append(f"Instructions: {content}")
+            elif role == 'user':
+                prompt_parts.append(f"Human: {content}")
+            elif role == 'assistant':
+                prompt_parts.append(f"Assistant: {content}")
+        
+        prompt_parts.append("Assistant:")
+        return "\n\n".join(prompt_parts)
+    
+    def get_available_models(self) -> List[str]:
+        """Get list of available Ollama models"""
+        
+        try:
+            response = requests.get(f"{self.ollama_url}/api/tags")
+            if response.status_code == 200:
+                models = response.json()
+                return [model['name'] for model in models.get('models', [])]
+            return []
+        except Exception as e:
+            self.logger.error(f"Error getting models: {str(e)}")
+            return []
+    
+    def get_model_info(self, model_name: str) -> Dict:
+        """Get information about a specific model"""
+        
+        try:
+            response = requests.post(
+                f"{self.ollama_url}/api/show",
+                json={"name": model_name}
+            )
+            if response.status_code == 200:
+                return response.json()
+            return {}
+        except Exception as e:
+            self.logger.error(f"Error getting model info: {str(e)}")
+            return {}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="privacy-box">
+                        <h4><i class="fas fa-lock"></i> Local AI Advantages</h4>
+                        <ul>
+                            <li><strong>Zero External Dependencies:</strong> All AI processing happens locally</li>
+                            <li><strong>No Usage Limits:</strong> Run unlimited queries without per-token costs</li>
+                            <li><strong>Customizable Models:</strong> Fine-tune models for your specific use cases</li>
+                            <li><strong>Predictable Performance:</strong> No network latency or external service downtime</li>
+                            <li><strong>Complete Audit Trail:</strong> All AI interactions logged locally</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="agents" class="step-section">
+                <div class="step-header">
+                    <h3 class="step-title">
+                        <span class="step-number">4</span>
+                        Privacy-First Multi-Agent Development
+                    </h3>
+                    <p class="step-description">
+                        Build specialized agents with privacy controls, audit logging, and compliance features.
+                    </p>
+                </div>
+                <div class="step-content">
+                    <div class="substep">
+                        <h4><i class="fas fa-robot substep-icon"></i> FastAPI Multi-Agent Backend</h4>
+                        <div class="code-block">
+                            <div class="code-header">backend/main.py</div>
+                            <pre><code class="language-python">from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel
+from typing import List, Dict, Optional
+import logging
+import asyncio
+from datetime import datetime
+
+# Import our services
+from local_ai_service import LocalAIService
+from vector_db import LocalVectorDB
+from agents.privacy_support_agent import PrivacySupportAgent
+from agents.secure_sales_agent import SecureSalesAgent
+from agents.technical_agent import TechnicalAgent
+from agents.custom_compliance_agent import CustomComplianceAgent
+from database import get_db_session
+from auth import verify_token, get_current_tenant
+from audit import AuditLogger
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="Privacy-First Multi-Agent Chatbot",
+    description="Self-hosted multi-tenant chatbot with complete privacy control",
+    version="1.0.0"
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure based on your domains
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Initialize services
+ai_service = LocalAIService()
+vector_db = LocalVectorDB()
+audit_logger = AuditLogger()
+
+# Initialize agents
+support_agent = PrivacySupportAgent(ai_service, vector_db, audit_logger)
+sales_agent = SecureSalesAgent(ai_service, vector_db, audit_logger)
+technical_agent = TechnicalAgent(ai_service, vector_db, audit_logger)
+compliance_agent = CustomComplianceAgent(ai_service, vector_db, audit_logger)
+
+# Security
+security = HTTPBearer()
+
+# Request/Response Models
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str
+    user_id: Optional[str] = None
+    metadata: Optional[Dict] = {}
+
+class ChatResponse(BaseModel):
+    response: str
+    agent_type: str
+    session_id: str
+    confidence: float
+    sources: List[str] = []
+    escalation_needed: bool = False
+    compliance_status: str = "compliant"
+
+@app.on_startup
+async def startup_event():
+    """Initialize services and check health"""
+    logging.info("Starting Privacy-First Multi-Agent Chatbot")
+    
+    # Check AI service health
+    models = ai_service.get_available_models()
+    logging.info(f"Available AI models: {models}")
+    
+    # Initialize vector database
+    await vector_db.health_check()
+    
+    logging.info("All services initialized successfully")
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "services": {
+            "ai_models": ai_service.get_available_models(),
+            "vector_db": "connected",
+            "audit_logger": "active"
+        }
+    }
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat_endpoint(
+    request: ChatRequest,
+    background_tasks: BackgroundTasks,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    tenant_id: str = Depends(get_current_tenant)
+):
+    """Main chat endpoint with agent routing"""
+    
+    try:
+        # Verify authentication and get tenant info
+        user_info = await verify_token(credentials.credentials)
+        
+        # Log the interaction for audit
+        background_tasks.add_task(
+            audit_logger.log_interaction,
+            tenant_id=tenant_id,
+            user_id=request.user_id or user_info.get('user_id'),
+            session_id=request.session_id,
+            message=request.message[:100],  # Truncate for privacy
+            timestamp=datetime.utcnow()
+        )
+        
+        # Route to appropriate agent
+        agent_type = await route_to_agent(request.message, tenant_id)
+        
+        # Process with selected agent
+        if agent_type == "support":
+            response = await support_agent.process_message(
+                message=request.message,
+                session_id=request.session_id,
+                tenant_id=tenant_id,
+                user_id=request.user_id
+            )
+        elif agent_type == "sales":
+            response = await sales_agent.process_message(
+                message=request.message,
+                session_id=request.session_id,
+                tenant_id=tenant_id,
+                user_id=request.user_id
+            )
+        elif agent_type == "technical":
+            response = await technical_agent.process_message(
+                message=request.message,
+                session_id=request.session_id,
+                tenant_id=tenant_id,
+                user_id=request.user_id
+            )
+        elif agent_type == "compliance":
+            response = await compliance_agent.process_message(
+                message=request.message,
+                session_id=request.session_id,
+                tenant_id=tenant_id,
+                user_id=request.user_id
+            )
+        else:
+            # Default to support agent
+            response = await support_agent.process_message(
+                message=request.message,
+                session_id=request.session_id,
+                tenant_id=tenant_id,
+                user_id=request.user_id
+            )
+        
+        # Add compliance check
+        compliance_status = await compliance_agent.check_compliance(
+            response=response.get('response', ''),
+            tenant_id=tenant_id
+        )
+        
+        # Log response for audit
+        background_tasks.add_task(
+            audit_logger.log_response,
+            tenant_id=tenant_id,
+            session_id=request.session_id,
+            agent_type=agent_type,
+            response=response.get('response', '')[:100],
+            confidence=response.get('confidence', 0),
+            compliance_status=compliance_status
+        )
+        
+        return ChatResponse(
+            response=response.get('response', ''),
+            agent_type=agent_type,
+            session_id=request.session_id,
+            confidence=response.get('confidence', 0.8),
+            sources=response.get('sources', []),
+            escalation_needed=response.get('escalation_needed', False),
+            compliance_status=compliance_status
+        )
+        
+    except Exception as e:
+        logging.error(f"Chat endpoint error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+async def route_to_agent(message: str, tenant_id: str) -> str:
+    """Route message to appropriate agent based on content analysis"""
+    
+    # Get tenant's routing configuration
+    tenant_config = await get_tenant_config(tenant_id)
+    
+    # Analyze message content
+    message_lower = message.lower()
+    
+    # Keyword-based routing (can be enhanced with ML)
+    if any(word in message_lower for word in ['price', 'cost', 'buy', 'purchase', 'demo', 'trial']):
+        return "sales"
+    elif any(word in message_lower for word in ['technical', 'api', 'integration', 'code', 'error', 'bug']):
+        return "technical"
+    elif any(word in message_lower for word in ['compliance', 'privacy', 'gdpr', 'hipaa', 'audit']):
+        return "compliance"
+    else:
+        return "support"
+
+@app.get("/api/analytics/{tenant_id}")
+async def get_analytics(
+    tenant_id: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Get analytics for tenant (privacy-focused)"""
+    
+    # Verify tenant access
+    user_info = await verify_token(credentials.credentials)
+    
+    analytics = await audit_logger.get_analytics(tenant_id)
+    
+    return {
+        "tenant_id": tenant_id,
+        "analytics": analytics,
+        "privacy_note": "All data is processed and stored locally for maximum privacy"
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h4><i class="fas fa-info-circle"></i> Next Steps</h4>
+                <p><strong>Continue with Security & Deployment:</strong> Complete the local implementation with advanced security features, backup strategies, and production deployment procedures.</p>
+                <ul>
+                    <li>Configure SSL/TLS certificates</li>
+                    <li>Set up automated backups</li>
+                    <li>Implement monitoring and alerting</li>
+                    <li>Create disaster recovery procedures</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div id="deployment" class="step-section">
+        <div class="step-header">
+            <h3 class="step-title">
+                <span class="step-number">5</span>
+                Security, SSL & Production Hardening
+            </h3>
+            <p class="step-description">
+                Implement enterprise-grade security, SSL certificates, backup systems, and production-ready infrastructure.
+            </p>
+        </div>
+        <div class="step-content">
+            <div class="substep">
+                <h4><i class="fas fa-shield-alt substep-icon"></i> SSL Certificate Setup</h4>
+                <div class="code-block">
+                    <div class="code-header">nginx/nginx.conf - Production HTTPS Configuration</div>
+                    <pre><code># Production NGINX configuration with SSL
+upstream backend {
+    least_conn;
+    server api-gateway:8080 max_fails=3 fail_timeout=30s;
+    server api-gateway:8080 max_fails=3 fail_timeout=30s backup;
+}
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name chatbot.yourdomain.com admin.yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+# Main HTTPS server
+server {
+    listen 443 ssl http2;
+    server_name chatbot.yourdomain.com;
+    
+    # SSL Configuration
+    ssl_certificate /etc/nginx/ssl/chatbot.crt;
+    ssl_certificate_key /etc/nginx/ssl/chatbot.key;
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+    
+    # SSL Security Settings
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    # Security Headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options DENY always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;" always;
+    
+    # Rate Limiting
+    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+    limit_req_zone $binary_remote_addr zone=login:10m rate=1r/s;
+    
+    # Main API
+    location /api/ {
+        limit_req zone=api burst=20 nodelay;
+        proxy_pass http://backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Security
+        proxy_hide_header X-Powered-By;
+        proxy_set_header X-Request-ID $request_id;
+        
+        # Timeouts
+        proxy_connect_timeout 30s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+    
+    # WebSocket support
+    location /ws/ {
+        proxy_pass http://backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+    
+    # Static files
+    location /static/ {
+        alias /var/www/static/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        gzip on;
+        gzip_types text/css text/javascript application/javascript application/json;
+    }
+    
+    # Health check
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+}
+
+# Admin panel
+server {
+    listen 443 ssl http2;
+    server_name admin.yourdomain.com;
+    
+    ssl_certificate /etc/nginx/ssl/chatbot.crt;
+    ssl_certificate_key /etc/nginx/ssl/chatbot.key;
+    
+    # Additional authentication for admin
+    auth_basic "Admin Access";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    
+    location / {
+        proxy_pass http://admin-dashboard:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</code></pre>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-database substep-icon"></i> Automated Backup System</h4>
+                <div class="code-block">
+                    <div class="code-header">scripts/backup.sh - Comprehensive Backup Script</div>
+                    <pre><code class="language-bash">#!/bin/bash
+
+# Comprehensive backup script for self-hosted chatbot
+set -euo pipefail
+
+# Configuration
+BACKUP_DIR="/opt/chatbot-backups"
+RETENTION_DAYS=30
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_NAME="chatbot_backup_${DATE}"
+
+# Create backup directory
+mkdir -p "${BACKUP_DIR}/${BACKUP_NAME}"
+
+# Function to log messages
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "${BACKUP_DIR}/backup.log"
+}
+
+log "Starting backup: ${BACKUP_NAME}"
+
+# 1. Database Backup
+log "Backing up PostgreSQL database..."
+docker exec chatbot_postgres_1 pg_dump -U chatbot_user chatbot_db | gzip > "${BACKUP_DIR}/${BACKUP_NAME}/database.sql.gz"
+
+# 2. Redis Backup
+log "Backing up Redis data..."
+docker exec chatbot_redis_1 redis-cli BGSAVE
+sleep 5
+docker cp chatbot_redis_1:/data/dump.rdb "${BACKUP_DIR}/${BACKUP_NAME}/redis-dump.rdb"
+
+# 3. ChromaDB Backup
+log "Backing up ChromaDB vector database..."
+docker run --rm -v chatbot_chromadb_data:/source -v "${BACKUP_DIR}/${BACKUP_NAME}":/backup alpine tar czf /backup/chromadb-data.tar.gz -C /source .
+
+# 4. Ollama Models Backup
+log "Backing up Ollama models..."
+docker run --rm -v chatbot_ollama_data:/source -v "${BACKUP_DIR}/${BACKUP_NAME}":/backup alpine tar czf /backup/ollama-models.tar.gz -C /source .
+
+# 5. MinIO Object Storage Backup
+log "Backing up MinIO object storage..."
+docker run --rm -v chatbot_minio_data:/source -v "${BACKUP_DIR}/${BACKUP_NAME}":/backup alpine tar czf /backup/minio-data.tar.gz -C /source .
+
+# 6. Configuration Files Backup
+log "Backing up configuration files..."
+tar czf "${BACKUP_DIR}/${BACKUP_NAME}/config.tar.gz" \
+    /opt/chatbot/.env \
+    /opt/chatbot/docker-compose.yml \
+    /opt/chatbot/nginx/ \
+    /opt/chatbot/prometheus/ \
+    /opt/chatbot/grafana/ \
+    /opt/chatbot/vault/ 2>/dev/null || true
+
+# 7. Application Logs Backup
+log "Backing up application logs..."
+tar czf "${BACKUP_DIR}/${BACKUP_NAME}/logs.tar.gz" /opt/chatbot/logs/ 2>/dev/null || true
+
+# 8. SSL Certificates Backup
+log "Backing up SSL certificates..."
+tar czf "${BACKUP_DIR}/${BACKUP_NAME}/ssl.tar.gz" /opt/chatbot/nginx/ssl/ 2>/dev/null || true
+
+# 9. Create backup manifest
+log "Creating backup manifest..."
+cat > "${BACKUP_DIR}/${BACKUP_NAME}/manifest.json" << EOF
+{
+    "backup_name": "${BACKUP_NAME}",
+    "created_at": "$(date -Iseconds)",
+    "hostname": "$(hostname)",
+    "components": [
+        "database",
+        "redis", 
+        "chromadb",
+        "ollama_models",
+        "minio_storage",
+        "configuration",
+        "logs",
+        "ssl_certificates"
+    ],
+    "retention_days": ${RETENTION_DAYS}
+}
+EOF
+
+# 10. Calculate checksums
+log "Calculating checksums..."
+cd "${BACKUP_DIR}/${BACKUP_NAME}"
+find . -type f -exec sha256sum {} \; > checksums.sha256
+
+# 11. Compress entire backup
+log "Compressing backup..."
+cd "${BACKUP_DIR}"
+tar czf "${BACKUP_NAME}.tar.gz" "${BACKUP_NAME}/"
+rm -rf "${BACKUP_NAME}/"
+
+# 12. Test backup integrity
+log "Testing backup integrity..."
+if tar tzf "${BACKUP_NAME}.tar.gz" >/dev/null; then
+    log "Backup integrity test passed"
+else
+    log "ERROR: Backup integrity test failed!"
+    exit 1
+fi
+
+# 13. Cleanup old backups
+log "Cleaning up old backups..."
+find "${BACKUP_DIR}" -name "chatbot_backup_*.tar.gz" -mtime +${RETENTION_DAYS} -delete
+
+# 14. Send backup to remote storage (optional)
+if command -v rclone &> /dev/null && [ -f ~/.rclone.conf ]; then
+    log "Uploading backup to remote storage..."
+    rclone copy "${BACKUP_DIR}/${BACKUP_NAME}.tar.gz" remote:chatbot-backups/
+fi
+
+# 15. Send notification
+BACKUP_SIZE=$(du -h "${BACKUP_DIR}/${BACKUP_NAME}.tar.gz" | cut -f1)
+log "Backup completed successfully. Size: ${BACKUP_SIZE}"
+
+# Optional: Send email notification
+if command -v mail &> /dev/null; then
+    echo "Chatbot backup completed successfully on $(hostname) at $(date). Backup size: ${BACKUP_SIZE}" | \
+    mail -s "Chatbot Backup Success - ${DATE}" admin@yourdomain.com
+fi</code></pre>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-chart-line substep-icon"></i> Monitoring & Alerting Setup</h4>
+                <div class="code-block">
+                    <div class="code-header">monitoring/alertmanager.yml - Alerting Configuration</div>
+                    <pre><code class="language-yaml">global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@yourdomain.com'
+  
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'web.hook'
+  routes:
+  - match:
+      severity: critical
+    receiver: 'critical-alerts'
+  - match:
+      severity: warning
+    receiver: 'warning-alerts'
+
+receivers:
+- name: 'web.hook'
+  webhook_configs:
+  - url: 'http://localhost:5001/'
+    
+- name: 'critical-alerts'
+  email_configs:
+  - to: 'admin@yourdomain.com'
+    subject: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+    body: |
+      Alert: {{ .GroupLabels.alertname }}
+      Summary: {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}
+      
+      Details:
+      {{ range .Alerts }}
+      - Description: {{ .Annotations.description }}
+      - Instance: {{ .Labels.instance }}
+      - Severity: {{ .Labels.severity }}
+      {{ end }}
+      
+  slack_configs:
+  - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+    channel: '#chatbot-alerts'
+    title: 'Critical Alert: {{ .GroupLabels.alertname }}'
+    text: '{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+    
+- name: 'warning-alerts'
+  email_configs:
+  - to: 'team@yourdomain.com'
+    subject: '⚠️ WARNING: {{ .GroupLabels.alertname }}'</code></pre>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-cogs substep-icon"></i> Production Deployment Script</h4>
+                <div class="code-block">
+                    <div class="code-header">scripts/deploy-production.sh - Production Deployment</div>
+                    <pre><code class="language-bash">#!/bin/bash
+
+# Production deployment script
+set -euo pipefail
+
+# Configuration
+ENVIRONMENT="production"
+BACKUP_BEFORE_DEPLOY=true
+HEALTH_CHECK_TIMEOUT=300
+ROLLBACK_ON_FAILURE=true
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Logging
+log() {
+    echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
+}
+
+warn() {
+    echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')] WARNING:${NC} $1"
+}
+
+error() {
+    echo -e "${RED}[$(date '+%Y-%m-%d %H:%M:%S')] ERROR:${NC} $1"
+}
+
+# Pre-deployment checks
+pre_deployment_checks() {
+    log "Running pre-deployment checks..."
+    
+    # Check if Docker is running
+    if ! docker info >/dev/null 2>&1; then
+        error "Docker is not running"
+        exit 1
+    fi
+    
+    # Check available disk space (require at least 10GB)
+    available_space=$(df /opt/chatbot --output=avail | tail -n1)
+    if [ "$available_space" -lt 10485760 ]; then  # 10GB in KB
+        error "Insufficient disk space. At least 10GB required."
+        exit 1
+    fi
+    
+    # Check if all required files exist
+    required_files=(
+        "/opt/chatbot/docker-compose.yml"
+        "/opt/chatbot/.env"
+        "/opt/chatbot/nginx/nginx.conf"
+    )
+    
+    for file in "${required_files[@]}"; do
+        if [ ! -f "$file" ]; then
+            error "Required file missing: $file"
+            exit 1
+        fi
+    done
+    
+    log "Pre-deployment checks passed"
+}
+
+# Create backup before deployment
+create_backup() {
+    if [ "$BACKUP_BEFORE_DEPLOY" = true ]; then
+        log "Creating backup before deployment..."
+        /opt/chatbot/scripts/backup.sh
+        if [ $? -eq 0 ]; then
+            log "Backup created successfully"
+        else
+            error "Backup failed"
+            exit 1
+        fi
+    fi
+}
+
+# Deploy new version
+deploy() {
+    log "Starting deployment..."
+    
+    cd /opt/chatbot
+    
+    # Pull latest images
+    log "Pulling latest Docker images..."
+    docker-compose pull
+    
+    # Graceful shutdown of services
+    log "Gracefully stopping services..."
+    docker-compose stop
+    
+    # Start services with new images
+    log "Starting services with new configuration..."
+    docker-compose up -d
+    
+    # Wait for services to be ready
+    log "Waiting for services to start..."
+    sleep 30
+}
+
+# Health checks
+health_check() {
+    log "Performing health checks..."
+    
+    local timeout=$HEALTH_CHECK_TIMEOUT
+    local interval=10
+    local elapsed=0
+    
+    while [ $elapsed -lt $timeout ]; do
+        # Check API health
+        if curl -sf http://localhost/health >/dev/null 2>&1; then
+            log "API health check passed"
+            
+            # Check database connectivity
+            if docker exec chatbot_postgres_1 pg_isready -U chatbot_user >/dev/null 2>&1; then
+                log "Database health check passed"
+                
+                # Check Redis connectivity
+                if docker exec chatbot_redis_1 redis-cli ping | grep -q PONG; then
+                    log "Redis health check passed"
+                    
+                    # Check Ollama models
+                    if docker exec chatbot_ollama_1 ollama list | grep -q llama2; then
+                        log "AI models health check passed"
+                        log "All health checks passed!"
+                        return 0
+                    fi
+                fi
+            fi
+        fi
+        
+        sleep $interval
+        elapsed=$((elapsed + interval))
+        log "Health check attempt $((elapsed / interval))..."
+    done
+    
+    error "Health checks failed after $timeout seconds"
+    return 1
+}
+
+# Rollback function
+rollback() {
+    if [ "$ROLLBACK_ON_FAILURE" = true ]; then
+        warn "Rolling back to previous version..."
+        
+        # Stop current services
+        docker-compose down
+        
+        # Restore from latest backup
+        latest_backup=$(ls -t /opt/chatbot-backups/chatbot_backup_*.tar.gz | head -n1)
+        if [ -n "$latest_backup" ]; then
+            log "Restoring from backup: $latest_backup"
+            
+            # Extract backup
+            cd /opt/chatbot-backups
+            tar xzf "$latest_backup"
+            backup_dir=$(basename "$latest_backup" .tar.gz)
+            
+            # Restore database
+            zcat "${backup_dir}/database.sql.gz" | docker exec -i chatbot_postgres_1 psql -U chatbot_user -d chatbot_db
+            
+            # Restore Redis
+            docker cp "${backup_dir}/redis-dump.rdb" chatbot_redis_1:/data/dump.rdb
+            docker restart chatbot_redis_1
+            
+            # Start services
+            cd /opt/chatbot
+            docker-compose up -d
+            
+            log "Rollback completed"
+        else
+            error "No backup found for rollback"
+        fi
+    fi
+}
+
+# Post-deployment tasks
+post_deployment() {
+    log "Running post-deployment tasks..."
+    
+    # Update Prometheus targets
+    docker exec chatbot_prometheus_1 promtool config reload || true
+    
+    # Restart Grafana to pick up new dashboards
+    docker restart chatbot_grafana_1
+    
+    # Clean up old Docker images
+    docker image prune -f
+    
+    # Send deployment notification
+    if command -v mail &> /dev/null; then
+        echo "Chatbot deployment completed successfully on $(hostname) at $(date)" | \
+        mail -s "Chatbot Deployment Success" admin@yourdomain.com
+    fi
+    
+    log "Post-deployment tasks completed"
+}
+
+# Main deployment flow
+main() {
+    log "Starting production deployment..."
+    
+    pre_deployment_checks
+    create_backup
+    deploy
+    
+    if health_check; then
+        post_deployment
+        log "Deployment completed successfully!"
+    else
+        error "Deployment failed health checks"
+        rollback
+        exit 1
+    fi
+}
+
+# Trap errors and perform rollback
+trap 'error "Deployment failed"; rollback; exit 1' ERR
+
+# Run main function
+main "$@"</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="step-section">
+        <div class="step-header">
+            <h3 class="step-title">
+                <span class="step-number">6</span>
+                Detailed Week-by-Week Privacy-First Implementation
+            </h3>
+            <p class="step-description">
+                Complete 8-week implementation timeline optimized for privacy-critical and self-hosted environments.
+            </p>
+        </div>
+        <div class="step-content">
+            <div class="substep">
+                <h4><i class="fas fa-calendar substep-icon"></i> Week 3-4: Privacy-First Agent Development</h4>
+                <div class="command-list">
+                    <li>
+                        <strong>Day 15-17: Local AI Integration & Privacy Agent Router</strong>
+                        <p>Configure Ollama with local models, implement privacy-preserving routing with audit logging</p>
+                    </li>
+                    <li>
+                        <strong>Day 18-20: Privacy-Compliant Support Agent</strong>
+                        <p>Build support agent with data anonymization, retention policies, GDPR compliance features</p>
+                    </li>
+                    <li>
+                        <strong>Day 21-23: Secure Sales Agent</strong>
+                        <p>Develop sales agent with encrypted customer data, privacy-by-design, consent management</p>
+                    </li>
+                    <li>
+                        <strong>Day 24-26: Technical & Compliance Agents</strong>
+                        <p>Create technical support agent and custom compliance agent for industry-specific regulations</p>
+                    </li>
+                    <li>
+                        <strong>Day 27-28: Multi-Tenant Privacy Architecture</strong>
+                        <p>Implement tenant data isolation, encrypted storage, privacy-preserving analytics</p>
+                    </li>
+                    <li>
+                        <strong>Week 4 Deliverable: ✅ Complete privacy-first multi-agent system</strong>
+                        <p>Fully compliant agents with end-to-end encryption and privacy-by-design principles</p>
+                    </li>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-desktop substep-icon"></i> Week 5-6: Self-Hosted Frontend & Security Testing</h4>
+                <div class="command-list">
+                    <li>
+                        <strong>Day 29-31: Privacy-Focused Widget Development</strong>
+                        <p>Build widget with client-side encryption, no external dependencies, privacy controls</p>
+                    </li>
+                    <li>
+                        <strong>Day 32-34: Compliance Dashboard Creation</strong>
+                        <p>Develop admin dashboard with audit trails, privacy controls, data export capabilities</p>
+                    </li>
+                    <li>
+                        <strong>Day 35-37: Self-Hosted Integration Tools</strong>
+                        <p>Create deployment tools, backup utilities, monitoring dashboards for self-hosting</p>
+                    </li>
+                    <li>
+                        <strong>Day 38-40: Comprehensive Security Testing</strong>
+                        <p>Security penetration testing, privacy compliance validation, vulnerability assessments</p>
+                    </li>
+                    <li>
+                        <strong>Day 41-42: Performance & Privacy Optimization</strong>
+                        <p>Local performance tuning, data minimization, privacy-preserving analytics</p>
+                    </li>
+                    <li>
+                        <strong>Week 6 Deliverable: ✅ Complete self-hosted solution with security validation</strong>
+                        <p>Production-ready system with comprehensive security testing and privacy compliance</p>
+                    </li>
+                </div>
+            </div>
+            
+            <div class="substep">
+                <h4><i class="fas fa-rocket substep-icon"></i> Week 7-8: Secure Deployment & Launch</h4>
+                <div class="command-list">
+                    <li>
+                        <strong>Day 43-45: Production Infrastructure Hardening</strong>
+                        <p>Deploy with security hardening, SSL/TLS configuration, firewall setup, intrusion detection</p>
+                    </li>
+                    <li>
+                        <strong>Day 46-48: Automated Deployment Pipeline</strong>
+                        <p>Configure GitLab CI/CD for self-hosted deployment, automated testing, security scanning</p>
+                    </li>
+                    <li>
+                        <strong>Day 49-51: Security Audit & Compliance Verification</strong>
+                        <p>Final security audit, compliance documentation, penetration testing, vulnerability patching</p>
+                    </li>
+                    <li>
+                        <strong>Day 52-54: Monitoring & Backup Systems</strong>
+                        <p>Production monitoring setup, automated backups, disaster recovery testing, alerting</p>
+                    </li>
+                    <li>
+                        <strong>Day 55-56: Secure Launch & Documentation</strong>
+                        <p>Go-live procedures, security documentation, team training, operational runbooks</p>
+                    </li>
+                    <li>
+                        <strong>Week 8 Deliverable: ✅ Live self-hosted system with maximum privacy</strong>
+                        <p>Fully operational privacy-first chatbot with complete data control and compliance</p>
+                    </li>
+                </div>
+            </div>
+            
+            <div class="privacy-box">
+                <h4><i class="fas fa-lock"></i> Privacy & Security Advantages</h4>
+                <p>Your self-hosted implementation provides:</p>
+                <ul>
+                    <li><strong>Complete Data Control:</strong> All data stays on your infrastructure</li>
+                    <li><strong>No External Dependencies:</strong> AI models run locally without internet</li>
+                    <li><strong>Customizable Security:</strong> Implement organization-specific security policies</li>
+                    <li><strong>Compliance Flexibility:</strong> Meet any regulatory requirement (HIPAA, SOX, etc.)</li>
+                    <li><strong>Air-Gapped Option:</strong> Can operate completely offline if needed</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box">
+                <h4><i class="fas fa-exclamation-triangle"></i> Production Considerations</h4>
+                <ul>
+                    <li><strong>Hardware Scaling:</strong> Monitor resource usage and scale hardware as needed</li>
+                    <li><strong>Model Updates:</strong> Regularly update AI models for improved performance</li>
+                    <li><strong>Security Audits:</strong> Perform regular security assessments</li>
+                    <li><strong>Backup Testing:</strong> Regularly test backup and recovery procedures</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

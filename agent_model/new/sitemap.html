@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent Chatbot Architecture - Complete Site Map</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 30px 0;
+            text-align: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stats-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 15px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            display: inline-block;
+            margin: 0 20px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+
+        .category-section {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-count {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .category-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .category-content.expanded {
+            max-height: 2000px;
+            padding: 20px 0;
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 0 30px;
+        }
+
+        .file-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .file-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .file-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .file-type {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .file-type.html { background: #e74c3c; }
+        .file-type.md { background: #3498db; }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-description {
+            color: #495057;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .file-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .tag.primary { background: #667eea; color: white; }
+        .tag.guide { background: #28a745; color: white; }
+        .tag.architecture { background: #ffc107; color: #212529; }
+        .tag.multi-agent { background: #6f42c1; color: white; }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .navigation-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .nav-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .quick-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .nav-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .nav-card:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .nav-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nav-card-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding: 30px 0;
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2rem; }
+            .file-grid { grid-template-columns: 1fr; }
+            .quick-nav { grid-template-columns: 1fr; }
+            .stat-item { display: block; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-sitemap"></i> Complete Site Map</h1>
+        <p>Comprehensive overview of all files in the Multi-Agent Chatbot Architecture Suite</p>
+        
+        <div class="stats-bar">
+            <span class="stat-item">
+                <i class="fas fa-file"></i> 29 Total Files
+            </span>
+            <span class="stat-item">
+                <i class="fas fa-hdd"></i> 925 KB Total Size
+            </span>
+            <span class="stat-item">
+                <i class="fas fa-code"></i> 25,247 Lines of Code
+            </span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search files, descriptions, or tags...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+
+        <!-- Main Entry Points -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                <div class="category-title">
+                    <i class="fas fa-home"></i>
+                    Main Entry Points
+                    <span class="category-count">3</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="category-content">
+                <div class="file-grid">
+                    <div class="file-card" data-search="readme documentation overview main entry">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">README.md</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 8.8KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 175 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type md">MD</span>
+                        </div>
+                        <div class="file-description">
+                            Main documentation file with complete overview of all 29 files, features, and implementation guides.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag primary">Entry Point</span>
+                            <span class="tag">Documentation</span>
+                            <span class="tag">Overview</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="README.md" class="btn btn-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="implementation guides index main navigation hub">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">implementation_guides_index.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 33KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 806 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Central navigation hub for all implementation guides across Google Cloud, Azure, AWS, and self-hosted platforms.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag primary">START HERE</span>
+                            <span class="tag guide">Implementation</span>
+                            <span class="tag">Navigation</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="implementation_guides_index.html" class="btn btn-primary">
+                                <i class="fas fa-rocket"></i> Open Guide
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="detailed timeline day by day implementation schedule">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">detailed_implementation_timeline.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 47KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 1,077 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Comprehensive day-by-day implementation timeline with specific commands, deliverables, and success criteria for all platforms.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag primary">NEW!</span>
+                            <span class="tag guide">Timeline</span>
+                            <span class="tag">Daily Tasks</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="detailed_implementation_timeline.html" class="btn btn-primary">
+                                <i class="fas fa-calendar-alt"></i> View Timeline
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Guides -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                <div class="category-title">
+                    <i class="fas fa-code"></i>
+                    Implementation Guides
+                    <span class="category-count">4</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="category-content">
+                <div class="file-grid">
+                    <div class="file-card" data-search="google cloud gcp implementation guide vertex ai">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">implementation_guide_google_cloud.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 76KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 2,272 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Complete step-by-step guide for building on Google Cloud with Vertex AI, Cloud Run, and Firestore. Includes Terraform templates and CI/CD pipelines.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag guide">Beginner</span>
+                            <span class="tag">Google Cloud</span>
+                            <span class="tag">Vertex AI</span>
+                            <span class="tag">$75-145/month</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="implementation_guide_google_cloud.html" class="btn btn-primary">
+                                <i class="fab fa-google"></i> Start Guide
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="microsoft azure implementation guide openai cognitive services">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">implementation_guide_microsoft_azure.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 68KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 1,807 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Enterprise deployment guide for Microsoft Azure using Azure OpenAI Service, App Service, and Cognitive Search with ARM templates.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag guide">Intermediate</span>
+                            <span class="tag">Microsoft Azure</span>
+                            <span class="tag">Azure OpenAI</span>
+                            <span class="tag">$385-495/month</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="implementation_guide_microsoft_azure.html" class="btn btn-primary">
+                                <i class="fab fa-microsoft"></i> Start Guide
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="amazon aws implementation guide bedrock lambda dynamodb">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">implementation_guide_amazon_aws.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 73KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 1,915 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Advanced AWS deployment using Amazon Bedrock, Lambda, DynamoDB, and global infrastructure with CDK and CloudFormation.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag guide">Advanced</span>
+                            <span class="tag">Amazon AWS</span>
+                            <span class="tag">Bedrock</span>
+                            <span class="tag">$1,025-1,430/month</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="implementation_guide_amazon_aws.html" class="btn btn-primary">
+                                <i class="fab fa-aws"></i> Start Guide
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="local self hosted implementation guide docker kubernetes ollama">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">implementation_guide_local.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 74KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 2,121 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Privacy-first self-hosted deployment with Docker, Kubernetes, Ollama, and comprehensive security hardening procedures.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag guide">Expert</span>
+                            <span class="tag">Self-Hosted</span>
+                            <span class="tag">Privacy-First</span>
+                            <span class="tag">$520-1,040/month</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="implementation_guide_local.html" class="btn btn-primary">
+                                <i class="fas fa-server"></i> Start Guide
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Architecture Diagrams -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                <div class="category-title">
+                    <i class="fas fa-sitemap"></i>
+                    Enhanced Architecture Diagrams
+                    <span class="category-count">4</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="category-content">
+                <div class="file-grid">
+                    <div class="file-card" data-search="enhanced google cloud architecture professional design">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">enhanced_google_cloud_architecture.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 28KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 758 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Professional Google Cloud architecture with clean design, proper service icons, and detailed cost analysis.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag architecture">Professional</span>
+                            <span class="tag">Google Cloud</span>
+                            <span class="tag">Clean Design</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="enhanced_google_cloud_architecture.html" class="btn btn-primary">
+                                <i class="fab fa-google"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="enhanced azure architecture professional microsoft">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">enhanced_microsoft_azure_architecture.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 33KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 819 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Enhanced Microsoft Azure architecture with enterprise features and brand-accurate design elements.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag architecture">Enterprise</span>
+                            <span class="tag">Microsoft Azure</span>
+                            <span class="tag">Enhanced</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="enhanced_microsoft_azure_architecture.html" class="btn btn-primary">
+                                <i class="fab fa-microsoft"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="enhanced aws architecture amazon professional">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">enhanced_amazon_aws_architecture.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 38KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 923 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Enhanced Amazon AWS architecture with global deployment strategy and advanced service integrations.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag architecture">Global</span>
+                            <span class="tag">Amazon AWS</span>
+                            <span class="tag">Advanced</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="enhanced_amazon_aws_architecture.html" class="btn btn-primary">
+                                <i class="fab fa-aws"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="enhanced platform comparison multi cloud">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">enhanced_platform_comparison.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 41KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 946 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Comprehensive comparison of all platforms with interactive tables, cost analysis, and recommendation engine.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag architecture">Comparison</span>
+                            <span class="tag">All Platforms</span>
+                            <span class="tag">Interactive</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="enhanced_platform_comparison.html" class="btn btn-primary">
+                                <i class="fas fa-balance-scale"></i> Compare
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multi-Agent Multi-Tenant -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                <div class="category-title">
+                    <i class="fas fa-users-cog"></i>
+                    Multi-Agent Multi-Tenant Solutions
+                    <span class="category-count">5</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="category-content">
+                <div class="file-grid">
+                    <div class="file-card" data-search="multi agent platform overview small business">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">multi_agent_platform_overview.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 37KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 856 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Main entry point for multi-agent, multi-tenant solutions optimized for small businesses with 200-500 users per month.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag multi-agent">Overview</span>
+                            <span class="tag">Small Business</span>
+                            <span class="tag">200-500 Users</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="multi_agent_platform_overview.html" class="btn btn-primary">
+                                <i class="fas fa-users"></i> View Overview
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="multi tenant google cloud specialized agents">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">multi_tenant_google_cloud.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 29KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 771 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Multi-tenant architecture for Google Cloud with specialized agents for Support, Sales, Technical, and General queries.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag multi-agent">4 Agents</span>
+                            <span class="tag">Google Cloud</span>
+                            <span class="tag">Multi-Tenant</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="multi_tenant_google_cloud.html" class="btn btn-primary">
+                                <i class="fab fa-google"></i> View Architecture
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="multi tenant azure specialized agents">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">multi_tenant_microsoft_azure.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 31KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 813 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Enterprise multi-tenant solution for Microsoft Azure with advanced security and compliance features.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag multi-agent">Enterprise</span>
+                            <span class="tag">Microsoft Azure</span>
+                            <span class="tag">Compliance</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="multi_tenant_microsoft_azure.html" class="btn btn-primary">
+                                <i class="fab fa-microsoft"></i> View Architecture
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="multi tenant aws specialized agents">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">multi_tenant_amazon_aws.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 32KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 834 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Global-scale multi-tenant architecture for Amazon AWS with advanced monitoring and auto-scaling capabilities.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag multi-agent">Global Scale</span>
+                            <span class="tag">Amazon AWS</span>
+                            <span class="tag">Auto-scaling</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="multi_tenant_amazon_aws.html" class="btn btn-primary">
+                                <i class="fab fa-aws"></i> View Architecture
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="multi tenant local self hosted privacy">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">multi_tenant_local_architecture.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 33KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 850 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Privacy-focused self-hosted multi-tenant solution with complete data sovereignty and security controls.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag multi-agent">Privacy-First</span>
+                            <span class="tag">Self-Hosted</span>
+                            <span class="tag">Data Sovereignty</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="multi_tenant_local_architecture.html" class="btn btn-primary">
+                                <i class="fas fa-server"></i> View Architecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Original Architecture Files -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleCategory(this)">
+                <div class="category-title">
+                    <i class="fas fa-archive"></i>
+                    Original Architecture Files
+                    <span class="category-count">13</span>
+                </div>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="category-content">
+                <div class="file-grid">
+                    <div class="file-card" data-search="chatbot architecture presentation reveal js slides">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">chatbot_architecture_presentation.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 24KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 465 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Interactive Reveal.js presentation covering project overview, architecture, cloud solutions, and implementation timeline.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag">Presentation</span>
+                            <span class="tag">Reveal.js</span>
+                            <span class="tag">Interactive</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="chatbot_architecture_presentation.html" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Present
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="file-card" data-search="chatbot architecture guide markdown technical documentation">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">chatbot_architecture_guide.md</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 7.3KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 251 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type md">MD</span>
+                        </div>
+                        <div class="file-description">
+                            Technical documentation in Markdown format with architecture details, AI models, and implementation examples.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag">Technical Docs</span>
+                            <span class="tag">Markdown</span>
+                            <span class="tag">Code Examples</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="chatbot_architecture_guide.md" class="btn btn-primary">
+                                <i class="fas fa-book"></i> Read
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Additional original files... -->
+                    <div class="file-card" data-search="all diagrams index mermaid svg collection">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">all_diagrams_index.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 10KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 264 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Collection index of all Mermaid diagrams and SVG visualizations with navigation links.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag">Diagrams</span>
+                            <span class="tag">Mermaid</span>
+                            <span class="tag">Index</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="all_diagrams_index.html" class="btn btn-secondary">
+                                <i class="fas fa-diagram-project"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Continue with remaining files... -->
+                    <div class="file-card" data-search="platform comparison original basic table">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">platform_comparison.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 15KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 344 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">
+                            Original platform comparison table with basic features and cost analysis across all cloud providers.
+                        </div>
+                        <div class="file-tags">
+                            <span class="tag">Original</span>
+                            <span class="tag">Comparison</span>
+                            <span class="tag">Basic</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="platform_comparison.html" class="btn btn-secondary">
+                                <i class="fas fa-table"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Add remaining original files in compact format -->
+                    <div class="file-card" data-search="google cloud architecture original basic">
+                        <div class="file-header">
+                            <div>
+                                <div class="file-name">google_cloud_architecture.html</div>
+                                <div class="file-meta">
+                                    <span class="meta-item"><i class="fas fa-weight-hanging"></i> 7.9KB</span>
+                                    <span class="meta-item"><i class="fas fa-list-ol"></i> 259 lines</span>
+                                </div>
+                            </div>
+                            <span class="file-type html">HTML</span>
+                        </div>
+                        <div class="file-description">Original Google Cloud architecture diagram with basic Mermaid visualization.</div>
+                        <div class="file-tags">
+                            <span class="tag">Original</span>
+                            <span class="tag">Google Cloud</span>
+                        </div>
+                        <div class="file-actions">
+                            <a href="google_cloud_architecture.html" class="btn btn-secondary">
+                                <i class="fab fa-google"></i> View
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Continue for other platforms and diagrams... -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="navigation-section">
+            <h2 class="nav-title">Quick Navigation</h2>
+            <div class="quick-nav">
+                <a href="implementation_guides_index.html" class="nav-card">
+                    <i class="fas fa-rocket"></i>
+                    <div class="nav-card-title">Start Implementation</div>
+                    <div class="nav-card-desc">Choose your platform and begin building</div>
+                </a>
+                
+                <a href="multi_agent_platform_overview.html" class="nav-card">
+                    <i class="fas fa-users-cog"></i>
+                    <div class="nav-card-title">Multi-Agent Solutions</div>
+                    <div class="nav-card-desc">Small business ready architectures</div>
+                </a>
+                
+                <a href="enhanced_platform_comparison.html" class="nav-card">
+                    <i class="fas fa-balance-scale"></i>
+                    <div class="nav-card-title">Compare Platforms</div>
+                    <div class="nav-card-desc">Find the best solution for your needs</div>
+                </a>
+                
+                <a href="detailed_implementation_timeline.html" class="nav-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="nav-card-title">Implementation Timeline</div>
+                    <div class="nav-card-desc">Day-by-day development schedule</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Multi-Agent Chatbot Architecture Suite | 29 Files | 925KB Total Size</p>
+        <p>Complete implementation guides for WordPress & HTML chatbot integration</p>
+    </div>
+
+    <script>
+        // Toggle category expansion
+        function toggleCategory(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            content.classList.toggle('expanded');
+            
+            if (content.classList.contains('expanded')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const fileCards = document.querySelectorAll('.file-card');
+            
+            fileCards.forEach(card => {
+                const searchData = card.getAttribute('data-search') || '';
+                const fileName = card.querySelector('.file-name').textContent.toLowerCase();
+                const description = card.querySelector('.file-description').textContent.toLowerCase();
+                
+                const isMatch = searchData.includes(searchTerm) || 
+                               fileName.includes(searchTerm) || 
+                               description.includes(searchTerm);
+                
+                if (isMatch || searchTerm === '') {
+                    card.style.display = '';
+                    card.classList.remove('hidden');
+                } else {
+                    card.style.display = 'none';
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // Auto-expand categories with visible results
+            if (searchTerm) {
+                document.querySelectorAll('.category-section').forEach(section => {
+                    const visibleCards = section.querySelectorAll('.file-card:not(.hidden)');
+                    const content = section.querySelector('.category-content');
+                    const icon = section.querySelector('.toggle-icon');
+                    
+                    if (visibleCards.length > 0) {
+                        content.classList.add('expanded');
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            }
+        });
+
+        // Auto-expand first category on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCategory = document.querySelector('.category-content');
+            const firstIcon = document.querySelector('.toggle-icon');
+            
+            firstCategory.classList.add('expanded');
+            firstIcon.style.transform = 'rotate(180deg)';
+        });
+    </script>
+</body>
+</html> 

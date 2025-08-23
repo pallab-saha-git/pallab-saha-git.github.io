@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow typical private files if ever added
+Disallow: /admin/
+Disallow: /api/
+
+# Point to sitemap
+Sitemap: https://pallabsaha.in/sitemap.xml

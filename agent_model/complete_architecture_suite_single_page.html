@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Chatbot Architecture Suite — All-in-One</title>
+  <base href="new/">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      /* Base */
+      --bg: #0b1020;
+      --panel: #0c1328;
+      --card: #0d142e;
+      --muted: #a5b4c3;        /* higher contrast than slate-400 */
+      --text: #ecf2f8;         /* lighter text for contrast */
+      --border: #23314d;
+
+      /* Primary brand */
+      --brand: #6366f1;        /* indigo */
+      --brand-2: #22d3ee;      /* cyan */
+
+      /* Accents by category (WCAG-friendly on dark) */
+      --violet: #8b5cf6;
+      --fuchsia: #db2777;
+      --cyan: #06b6d4;
+      --teal: #14b8a6;
+      --pink: #ec4899;
+      --amber: #f59e0b;
+
+      /* Platforms */
+      --gcp: #1a73e8;
+      --azure: #0078d4;
+      --aws: #ff9900;
+      --local: #27ae60;
+
+      /* Status */
+      --ok: #22c55e;
+      --warn: #eab308;
+      --danger: #ef4444;
+      --chip: #0f1a33;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at -10% -5%, rgba(99,102,241,0.18), transparent),
+        radial-gradient(1000px 500px at 110% -10%, rgba(34,211,238,0.14), transparent),
+        radial-gradient(1400px 700px at 50% 120%, rgba(139,92,246,0.12), transparent),
+        linear-gradient(180deg, var(--bg) 0%, #0f1a33 100%);
+    }
+    .layout { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+    aside {
+      position: sticky; top: 0; align-self: start; height: 100vh; overflow: auto;
+      background: linear-gradient(180deg, rgba(15,23,42,0.88), rgba(11,16,36,0.92));
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border);
+      padding: 20px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: 700; letter-spacing: .3px;
+    }
+    .brand i { color: var(--brand-2); }
+    .subtle { color: var(--muted); font-size: .9rem; margin-bottom: 16px; }
+    .search { position: relative; margin: 10px 0 16px; }
+    .search input {
+      width: 100%; padding: 10px 34px 10px 36px; border-radius: 10px; border: 1px solid var(--border);
+      background: #0a0f23; color: var(--text); outline: none;
+    }
+    .search i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    nav { display: grid; gap: 8px; }
+    .nav-group { margin-top: 16px; }
+    .nav-group h4 { margin: 10px 0 6px; font-size: .9rem; color: var(--muted); font-weight: 600; }
+    .toc a {
+      display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text);
+      padding: 8px 10px; border-radius: 10px; border: 1px solid transparent;
+    }
+    .toc a:hover { background: #0a1430; border-color: var(--border); }
+    .toc a:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+    .toc a.active { background: linear-gradient(90deg, rgba(34,211,238,0.15), rgba(99,102,241,0.10)); border-color: var(--brand-2); box-shadow: 0 0 0 2px rgba(34,211,238,0.15) inset; }
+    .toc a .tag { margin-left: auto; font-size: .7rem; background: var(--chip); color: var(--muted); padding: 2px 8px; border-radius: 999px; }
+
+    main { padding: 28px; }
+    .hero {
+      background: linear-gradient(180deg, rgba(99,102,241,0.16), rgba(34,211,238,0.12));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 22px 6px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 1.8rem; letter-spacing: .2px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .chip { background: var(--chip); color: var(--muted); border: 1px solid var(--border); padding: 6px 10px; border-radius: 999px; font-size: .8rem; }
+    .cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card {
+      background: linear-gradient(180deg, rgba(3,8,23,0.4), rgba(3,8,23,0.2)); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .card h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    .card p { margin: 6px 0; color: var(--muted); font-size: .92rem; }
+    .card .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .pill { font-size: .72rem; border: 1px solid var(--border); padding: 4px 8px; border-radius: 999px; color: var(--muted); }
+    .section { margin: 28px 0; border: 1px solid var(--border); border-radius: 16px; background: #0b1024; overflow: hidden; border-left: 6px solid transparent; }
+    .section header {
+      display: flex; align-items: center; gap: 10px; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(2,6,23,0.85), rgba(2,6,23,0.45));
+    }
+    .section header h2 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+    .section header .links { display: flex; gap: 10px; }
+    .section header a { color: var(--muted); text-decoration: none; font-size: .9rem; }
+    .section .content { padding: 16px; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .content h3 { margin: 10px 0 6px; font-size: 1rem; }
+    .content ul { margin: 8px 0 0 18px; color: var(--muted); }
+    .content li { margin: 4px 0; }
+  .mermaid-block { background: #0d1421; border: 1px solid var(--border); border-radius: 12px; padding: 10px; overflow: auto; box-shadow: 0 10px 24px rgba(0,0,0,0.25); }
+    /* Enhanced Mermaid styling for optimal readability */
+    .mermaid-block .mermaid { 
+      background: #0d1421; 
+      border-radius: 8px;
+    }
+    .mermaid-block .mermaid svg { 
+      background-color: #0d1421 !important; 
+      border-radius: 8px;
+    }
+    
+    /* Enhanced node styling with better contrast */
+    .mermaid-block .mermaid svg .node rect,
+    .mermaid-block .mermaid svg .node circle,
+    .mermaid-block .mermaid svg .node polygon,
+    .mermaid-block .mermaid svg .node path,
+    .mermaid-block .mermaid svg .labelBox,
+    .mermaid-block .mermaid svg .classGroup rect,
+    .mermaid-block .mermaid svg .actor,
+    .mermaid-block .mermaid svg .task rect {
+      fill: #1e293b !important;
+      stroke: #3b82f6 !important;
+      stroke-width: 2px !important;
+    }
+    
+    /* Cluster styling with visual distinction */
+    .mermaid-block .mermaid svg .cluster rect {
+      fill: #0f172a !important;
+      stroke: #06b6d4 !important;
+      stroke-width: 2px !important;
+      stroke-dasharray: 5,5;
+    }
+    
+    /* Text styling for maximum readability */
+    .mermaid-block .mermaid svg text { 
+      fill: #f1f5f9 !important;
+      font-weight: 500;
+    }
+    
+    /* Lines and arrows with high visibility */
+    .mermaid-block .mermaid svg .flowchart-link,
+    .mermaid-block .mermaid svg .messageLine0,
+    .mermaid-block .mermaid svg .messageLine1,
+    .mermaid-block .mermaid svg path.path {
+      stroke: #06b6d4 !important;
+      stroke-width: 2px !important;
+    }
+    
+    /* Arrow heads */
+    .mermaid-block .mermaid svg .arrowheadPath {
+      fill: #06b6d4 !important;
+      stroke: #06b6d4 !important;
+    }
+    .note { color: var(--muted); font-size: .9rem; }
+    .cost { color: var(--ok); font-weight: 600; }
+    .warning { color: var(--warn); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border); background: linear-gradient(180deg, rgba(34,211,238,0.14), rgba(99,102,241,0.12)); color: var(--text); text-decoration: none; font-size: .92rem; }
+  .btn:hover { border-color: var(--brand-2); box-shadow: 0 0 0 3px rgba(34,211,238,0.15) inset; }
+  .btn:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+    .small { font-size: .85rem; color: var(--muted); }
+    .footer { margin: 24px 0 10px; color: var(--muted); font-size: .85rem; text-align: center; }
+    .fab-top { position: fixed; right: 18px; bottom: 18px; background: #0a0f23; border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,.35); text-decoration: none; }
+    .hide { display: none !important; }
+    /* Section accents by category/platform */
+    /* Overview */
+    #overview-index { border-left-color: var(--brand-2); }
+    #overview-index > header { background: linear-gradient(90deg, rgba(34,211,238,0.16), rgba(99,102,241,0.12)); }
+    #sitemap { border-left-color: var(--cyan); }
+    #sitemap > header { background: linear-gradient(90deg, rgba(6,182,212,0.16), rgba(99,102,241,0.10)); }
+    #platform-comparison { border-left-color: var(--violet); }
+    #platform-comparison > header { background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(34,211,238,0.10)); }
+    #multi-agent-overview { border-left-color: var(--teal); }
+    #multi-agent-overview > header { background: linear-gradient(90deg, rgba(20,184,166,0.18), rgba(34,211,238,0.08)); }
+
+    /* Diagrams */
+    #diagrams-index, #diagram-architecture, #diagram-detailed, #diagram-sequence {
+      border-left-color: var(--fuchsia);
+    }
+    #diagrams-index > header, #diagram-architecture > header, #diagram-detailed > header, #diagram-sequence > header {
+      background: linear-gradient(90deg, rgba(219,39,119,0.18), rgba(139,92,246,0.12));
+    }
+
+    /* Platforms Basic */
+    #gcp-basic, #gcp-enhanced, #gcp-mt { border-left-color: var(--gcp); }
+    #gcp-basic > header, #gcp-enhanced > header, #gcp-mt > header { background: linear-gradient(90deg, rgba(26,115,232,0.18), rgba(34,211,238,0.08)); }
+    #azure-basic, #azure-enhanced, #azure-mt { border-left-color: var(--azure); }
+    #azure-basic > header, #azure-enhanced > header, #azure-mt > header { background: linear-gradient(90deg, rgba(0,120,212,0.18), rgba(99,102,241,0.08)); }
+    #aws-basic, #aws-enhanced, #aws-mt { border-left-color: var(--aws); }
+    #aws-basic > header, #aws-enhanced > header, #aws-mt > header { background: linear-gradient(90deg, rgba(255,153,0,0.20), rgba(139,92,246,0.06)); }
+    #local-basic, #local-mt { border-left-color: var(--local); }
+    #local-basic > header, #local-mt > header { background: linear-gradient(90deg, rgba(39,174,96,0.18), rgba(34,211,238,0.06)); }
+
+    /* Guides & Timeline */
+    #guides-index { border-left-color: var(--cyan); }
+    #guides-index > header { background: linear-gradient(90deg, rgba(6,182,212,0.18), rgba(20,184,166,0.10)); }
+    #guide-gcp { border-left-color: var(--gcp); }
+    #guide-gcp > header { background: linear-gradient(90deg, rgba(26,115,232,0.18), rgba(34,211,238,0.08)); }
+    #guide-azure { border-left-color: var(--azure); }
+    #guide-azure > header { background: linear-gradient(90deg, rgba(0,120,212,0.18), rgba(99,102,241,0.08)); }
+    #guide-aws { border-left-color: var(--aws); }
+    #guide-aws > header { background: linear-gradient(90deg, rgba(255,153,0,0.20), rgba(139,92,246,0.06)); }
+    #guide-local { border-left-color: var(--local); }
+    #guide-local > header { background: linear-gradient(90deg, rgba(39,174,96,0.18), rgba(34,211,238,0.06)); }
+    #timeline { border-left-color: var(--amber); }
+    #timeline > header { background: linear-gradient(90deg, rgba(245,158,11,0.20), rgba(99,102,241,0.06)); }
+
+    /* Interactive & Docs */
+    #enhanced-comparison { border-left-color: var(--brand-2); }
+    #enhanced-comparison > header { background: linear-gradient(90deg, rgba(34,211,238,0.20), rgba(236,72,153,0.08)); }
+    #presentation { border-left-color: var(--pink); }
+    #presentation > header { background: linear-gradient(90deg, rgba(236,72,153,0.18), rgba(139,92,246,0.10)); }
+    #single-page-diagram { border-left-color: var(--violet); }
+    #single-page-diagram > header { background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(34,211,238,0.08)); }
+    #readme { border-left-color: var(--brand); }
+    #readme > header { background: linear-gradient(90deg, rgba(99,102,241,0.18), rgba(34,211,238,0.08)); }
+    #tech-guide { border-left-color: var(--teal); }
+    #tech-guide > header { background: linear-gradient(90deg, rgba(20,184,166,0.18), rgba(6,182,212,0.10)); }
+    #recreation-guide { border-left-color: var(--violet); }
+    #recreation-guide > header { background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(99,102,241,0.08)); }
+
+    /* Accessibility helpers */
+    a { color: #89ddff; }
+    a:hover { color: #b3e7ff; }
+    a:focus-visible { outline: 2px dashed var(--brand-2); outline-offset: 2px; }
+
+    @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } aside { position: static; height: auto; } }
+  </style>
+</head>
+<body>
+  <a href="#overview-index" class="visually-hidden-focusable" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to content</a>
+  <div class="layout">
+    <aside>
+      <div class="brand"><i class="fas fa-robot"></i> Chatbot Architecture Suite</div>
+      <div class="subtle">Unified, searchable, and linked overview of every file in /new</div>
+      <div class="search">
+        <i class="fas fa-search"></i>
+        <input id="tocFilter" type="search" placeholder="Filter sections... (e.g. azure, diagram)"/>
+      </div>
+      <nav class="toc" id="toc">
+        <div class="nav-group">
+          <h4>Overview</h4>
+          <a href="#overview-index"><i class="fas fa-home"></i><span>Index Overview</span><span class="tag">index.html</span></a>
+          <a href="#sitemap"><i class="fas fa-sitemap"></i><span>Sitemap Summary</span><span class="tag">sitemap.html</span></a>
+          <a href="#platform-comparison"><i class="fas fa-table"></i><span>Platform Comparison</span><span class="tag">comparison</span></a>
+          <a href="#multi-agent-overview"><i class="fas fa-layer-group"></i><span>Multi‑Agent Overview</span><span class="tag">overview</span></a>
+        </div>
+        <div class="nav-group">
+          <h4>Core Diagrams</h4>
+          <a href="#diagrams-index"><i class="fas fa-shapes"></i><span>All Diagrams Hub</span><span class="tag">index</span></a>
+          <a href="#diagram-architecture"><i class="fas fa-diagram-project"></i><span>System Architecture</span><span class="tag">mermaid</span></a>
+          <a href="#diagram-detailed"><i class="fas fa-cubes"></i><span>Detailed Architecture</span><span class="tag">mermaid</span></a>
+          <a href="#diagram-sequence"><i class="fas fa-arrow-right-arrow-left"></i><span>Sequence Flow</span><span class="tag">mermaid</span></a>
+        </div>
+        <div class="nav-group">
+          <h4>Platforms (Basic)</h4>
+          <a href="#gcp-basic"><i class="fab fa-google"></i><span>Google Cloud</span><span class="tag">GCP</span></a>
+          <a href="#azure-basic"><i class="fab fa-microsoft"></i><span>Microsoft Azure</span><span class="tag">Azure</span></a>
+          <a href="#aws-basic"><i class="fab fa-aws"></i><span>Amazon AWS</span><span class="tag">AWS</span></a>
+          <a href="#local-basic"><i class="fas fa-server"></i><span>Self-Hosted</span><span class="tag">Local</span></a>
+        </div>
+        <div class="nav-group">
+          <h4>Platforms (Enhanced)</h4>
+          <a href="#gcp-enhanced"><i class="fab fa-google"></i><span>GCP Enhanced</span><span class="tag">enhanced</span></a>
+          <a href="#azure-enhanced"><i class="fab fa-microsoft"></i><span>Azure Enhanced</span><span class="tag">enhanced</span></a>
+          <a href="#aws-enhanced"><i class="fab fa-aws"></i><span>AWS Enhanced</span><span class="tag">enhanced</span></a>
+        </div>
+        <div class="nav-group">
+          <h4>Multi-Tenant</h4>
+          <a href="#gcp-mt"><i class="fab fa-google"></i><span>GCP Multi-Tenant</span><span class="tag">GCP</span></a>
+          <a href="#azure-mt"><i class="fab fa-microsoft"></i><span>Azure Multi-Tenant</span><span class="tag">Azure</span></a>
+          <a href="#aws-mt"><i class="fab fa-aws"></i><span>AWS Multi-Tenant</span><span class="tag">AWS</span></a>
+          <a href="#local-mt"><i class="fas fa-server"></i><span>Local Multi-Tenant</span><span class="tag">Local</span></a>
+        </div>
+        <div class="nav-group">
+          <h4>Implementation Guides</h4>
+          <a href="#guides-index"><i class="fas fa-compass"></i><span>Guides Hub</span><span class="tag">index</span></a>
+          <a href="#guide-gcp"><i class="fab fa-google"></i><span>GCP Guide</span><span class="tag">8 weeks</span></a>
+          <a href="#guide-azure"><i class="fab fa-microsoft"></i><span>Azure Guide</span><span class="tag">enterprise</span></a>
+          <a href="#guide-aws"><i class="fab fa-aws"></i><span>AWS Guide</span><span class="tag">global</span></a>
+          <a href="#guide-local"><i class="fas fa-server"></i><span>Self-Hosted Guide</span><span class="tag">privacy</span></a>
+          <a href="#timeline"><i class="fas fa-calendar"></i><span>Detailed Timeline</span><span class="tag">day-by-day</span></a>
+        </div>
+        <div class="nav-group">
+          <h4>Interactive & Docs</h4>
+          <a href="#enhanced-comparison"><i class="fas fa-sliders"></i><span>Smart Selector</span><span class="tag">interactive</span></a>
+          <a href="#presentation"><i class="fas fa-person-chalkboard"></i><span>Presentation</span><span class="tag">slides</span></a>
+          <a href="#single-page-diagram"><i class="fas fa-scroll"></i><span>Single Page Diagram</span><span class="tag">overview</span></a>
+          <a href="#readme"><i class="fas fa-book"></i><span>README</span><span class="tag">docs</span></a>
+          <a href="#tech-guide"><i class="fas fa-book"></i><span>Architecture Guide</span><span class="tag">docs</span></a>
+          <a href="#recreation-guide"><i class="fas fa-book"></i><span>Recreation Guide</span><span class="tag">docs</span></a>
+        </div>
+      </nav>
+    </aside>
+    <main>
+      <!-- HERO / OVERVIEW -->
+      <section id="overview-index" class="hero">
+        <h1><i class="fas fa-robot" style="color: var(--brand-2);"></i> Chatbot Architecture Suite — Unified View</h1>
+        <div class="chips">
+          <span class="chip"><i class="fas fa-diagram-project"></i> Diagrams</span>
+          <span class="chip"><i class="fas fa-sliders"></i> Interactive</span>
+          <span class="chip"><i class="fas fa-layer-group"></i> Multi-Agent</span>
+          <span class="chip"><i class="fas fa-people-group"></i> Multi-Tenant</span>
+          <span class="chip"><i class="fas fa-graduation-cap"></i> Step-by-step Guides</span>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <h3><i class="fas fa-bullseye"></i> Goals</h3>
+            <p>Integrate content from all files into a single, responsive page with jump links and embedded core diagrams.</p>
+            <div class="meta">
+              <span class="pill">Responsive</span>
+              <span class="pill">Internal Links</span>
+              <span class="pill">Mermaid</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3><i class="fas fa-cloud"></i> Platforms</h3>
+            <p>Google Cloud, Microsoft Azure, Amazon AWS, and Local/Self-Hosted with cost breakdowns and sample stacks.</p>
+            <div class="meta">
+              <span class="pill">GCP</span>
+              <span class="pill">Azure</span>
+              <span class="pill">AWS</span>
+              <span class="pill">Local</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3><i class="fas fa-scale-balanced"></i> Comparisons</h3>
+            <p>Static matrix and an enhanced interactive selector to guide decisions based on priorities.</p>
+            <div class="meta">
+              <span class="pill">Matrix</span>
+              <span class="pill">Smart Selector</span>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="index.html" target="_blank"><i class="fas fa-arrow-up-right-from-square"></i> Open index.html</a>
+          <span class="small">Tip: Use the left search to filter sections, e.g. “aws”, “diagram”, “guide”.</span>
+        </div>
+      </section>
+
+      <!-- SITEMAP SUMMARY -->
+      <section id="sitemap" class="section">
+        <header>
+          <h2><i class="fas fa-sitemap"></i> Sitemap Summary</h2>
+          <div class="links"><a href="sitemap.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <p class="note">Interactive overview and quick navigation UI of all resources, with categories, search, and stats.</p>
+          <div class="grid">
+            <div class="card">
+              <h3>Highlights</h3>
+              <ul>
+                <li>Searchable catalog of all 30 files</li>
+                <li>Category sections and quick navigation</li>
+                <li>Counts, badges, and direct links</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Use it for</h3>
+              <ul>
+                <li>Discovery and orientation</li>
+                <li>Jumping to specific resources fast</li>
+                <li>Showing suite coverage at a glance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPARISON -->
+      <section id="platform-comparison" class="section">
+        <header>
+          <h2><i class="fas fa-table"></i> Platform Comparison</h2>
+          <div class="links">
+            <a href="platform_comparison.html" target="_blank">Open table</a>
+            <a href="#enhanced-comparison">See Smart Selector</a>
+          </div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Static Matrix</h3>
+            <ul>
+              <li>Feature-by-feature comparison across GCP, Azure, AWS, Local</li>
+              <li>Recommendations and tradeoffs</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Costs (basic)</h3>
+            <ul>
+              <li>GCP: <span class="cost">$120–400/mo</span></li>
+              <li>Azure: <span class="cost">$150–450/mo</span></li>
+              <li>AWS: <span class="cost">$180–550/mo</span></li>
+              <li>Local: <span class="cost">$320–800/mo</span> + hardware</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIAGRAMS HUB -->
+      <section id="diagrams-index" class="section">
+        <header>
+          <h2><i class="fas fa-shapes"></i> All Diagrams Hub</h2>
+          <div class="links"><a href="all_diagrams_index.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <p class="note">Gallery of core diagrams and presentation links, plus feature highlights and quick entry points.</p>
+          <div class="grid">
+            <div class="card">
+              <h3>Includes</h3>
+              <ul>
+                <li>Architecture, Detailed, Sequence diagrams</li>
+                <li>Presentation and diagram cards</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Use it for</h3>
+              <ul>
+                <li>Visual-first navigation</li>
+                <li>Explaining the system to stakeholders</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIAGRAMS: ARCHITECTURE -->
+      <section id="diagram-architecture" class="section">
+        <header>
+          <h2><i class="fas fa-diagram-project"></i> System Architecture (Mermaid)</h2>
+          <div class="links"><a href="architecture_diagram.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <div class="mermaid-block">
+            <div class="mermaid">
+graph TB
+    subgraph "Frontend Layer"
+        WP[WordPress Website]
+        HTML[HTML Website]
+        Widget[Chatbot Widget<br/>JavaScript/React]
+    end
+    
+    subgraph "API Gateway"
+        API[REST API<br/>Authentication<br/>Rate Limiting]
+    end
+    
+    subgraph "Processing Layer"
+        Queue[Message Queue<br/>Redis/RabbitMQ]
+        Processor[Chat Processor<br/>Context Management]
+    end
+    
+    subgraph "AI Layer"
+        Embedder[Text Embedder<br/>Sentence Transformers]
+        VectorDB[(Vector Database<br/>Pinecone/ChromaDB)]
+        LLM[Language Model<br/>GPT-3.5/Llama 2]
+    end
+    
+    subgraph "Data Sources"
+        Crawler[Website Crawler<br/>Scrapy/BeautifulSoup]
+        KB[(Knowledge Base<br/>Additional Info)]
+        Cache[(Redis Cache<br/>Fast Responses)]
+    end
+    
+    subgraph "External Services"
+        WhatsApp[WhatsApp API<br/>Twilio/Meta]
+    end
+    
+    WP --> Widget
+    HTML --> Widget
+    Widget --> API
+    API --> Queue
+    Queue --> Processor
+    Processor --> Cache
+    Cache -.cached.-> Processor
+    Processor --> VectorDB
+    VectorDB --> LLM
+    LLM --> Processor
+    Processor --> WhatsApp
+    Crawler --> Embedder
+    Embedder --> VectorDB
+    KB --> VectorDB
+    
+    style Widget fill:#3498db,color:#fff
+    style LLM fill:#9b59b6,color:#fff
+    style WhatsApp fill:#25D366,color:#fff
+    style VectorDB fill:#2ecc71,color:#fff
+            </div>
+          </div>
+          <p class="note">Basic end-to-end flow across frontend, API, processing, AI, data, and external services.</p>
+        </div>
+      </section>
+
+      <!-- MULTI-AGENT PLATFORM OVERVIEW -->
+      <section id="multi-agent-overview" class="section">
+        <header>
+          <h2><i class="fas fa-layer-group"></i> Multi‑Agent Platform Overview</h2>
+          <div class="links"><a href="multi_agent_platform_overview.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Scope</h3>
+            <ul>
+              <li>Target segments and platform showcases</li>
+              <li>Agent types and orchestration options</li>
+              <li>Comparison matrix and recommendations</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Outcomes</h3>
+            <ul>
+              <li>Choose best platform for your needs</li>
+              <li>Understand multi‑agent capabilities</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIAGRAMS: DETAILED -->
+      <section id="diagram-detailed" class="section">
+        <header>
+          <h2><i class="fas fa-cubes"></i> Detailed Architecture (Mermaid)</h2>
+          <div class="links"><a href="detailed_architecture_diagram.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <div class="mermaid-block">
+            <div class="mermaid">
+graph TB
+    subgraph "Frontend Layer"
+        WP["`**WordPress Website**\n        • Blog/Corporate Site\n        • Plugin Integration\n        • Admin Panel`"]
+        
+        HTML["`**HTML Website**\n        • Static/Custom Site  \n        • JavaScript Widget\n        • CDN Integration`"]
+        
+        Widget["`**Chatbot Widget**\n        • React/Vue.js\n        • WebSocket Connection\n        • Mobile Responsive\n        • Customizable UI`"]
+    end
+    
+    subgraph "API Gateway & Load Balancer"
+        LB["`**Load Balancer**\n        • Traffic Distribution\n        • SSL Termination\n        • Health Checks`"]
+        
+        API["`**API Gateway**\n        • Authentication\n        • Rate Limiting\n        • Request Routing\n        • CORS Handling`"]
+    end
+    
+    subgraph "Core Processing Layer"
+        Auth["`**Authentication**\n        • JWT Tokens\n        • API Keys\n        • User Sessions`"]
+        
+        Queue["`**Message Queue**\n        • Redis/RabbitMQ\n        • Async Processing\n        • Scaling Buffer`"]
+        
+        Processor["`**Chat Processor**\n        • Context Management\n        • Session Handling\n        • Response Logic`"]
+        
+        Cache["`**Cache Layer**\n        • Redis Cache\n        • Frequent Queries\n        • Response Caching`"]
+    end
+    
+    subgraph "AI & ML Layer"
+        Embedder["`**Text Embedder**\n        • Sentence Transformers\n        • all-MiniLM-L6-v2\n        • Vector Generation`"]
+        
+        VectorDB["`**Vector Database**\n        **Cloud Options:**\n        • Pinecone\n        • Weaviate Cloud\n        • Qdrant Cloud\n        \n        **Self-Hosted:**\n        • ChromaDB\n        • FAISS\n        • Milvus`"]
+        
+        LLM["`**Language Models**\n        **Cloud APIs:**\n        • GPT-3.5 Turbo ($0.0015/1K)\n        • Claude Haiku ($0.00025/1K)\n        • Gemini Nano\n        \n        **Self-Hosted:**\n        • Llama 2 7B\n        • Mistral 7B\n        • Phi-2`"]
+        
+        Confidence["`**Confidence Scorer**\n        • Response Quality\n        • Threshold: 0.7\n        • Escalation Logic`"]
+    end
+    
+    subgraph "Data Sources & Content"
+        Crawler["`**Website Crawler**\n        • Scrapy/BeautifulSoup\n        • Scheduled Crawling\n        • Content Extraction\n        • HTML Parsing`"]
+        
+        KB["`**Knowledge Base**\n        • Additional Info\n        • FAQs\n        • Product Details\n        • Company Policies`"]
+        
+        ContentDB["`**Content Database**\n        • PostgreSQL/MongoDB\n        • Structured Data\n        • Metadata Storage`"]
+    end
+    
+    subgraph "External Integrations"
+        WhatsApp["`**WhatsApp Business API**\n        **Options:**\n        • Twilio WhatsApp\n        • Meta Cloud API\n        • WhatsApp Business API\n        \n        **Triggers:**\n        • Low Confidence < 0.7\n        • User Request\n        • Complex Queries`"]
+        
+        Analytics["`**Analytics & Monitoring**\n        • Google Analytics\n        • Custom Metrics\n        • Performance Tracking\n        • Error Logging`"]
+        
+        Webhook["`**Webhooks**\n        • Real-time Events\n        • Status Updates\n        • Integration Callbacks`"]
+    end
+    
+    subgraph "Infrastructure Options"
+        Cloud["`**Cloud Architecture**\n        **Compute:**\n        • AWS Lambda\n        • Google Cloud Functions\n        • Azure Functions\n        \n        **Storage:**\n        • AWS S3\n        • Google Cloud Storage\n        \n        **Database:**\n        • AWS RDS\n        • Google Cloud SQL`"]
+        
+        SelfHosted["`**Self-Hosted Architecture**\n        **Compute:**\n        • Docker Containers\n        • Kubernetes\n        • VM Instances\n        \n        **Storage:**\n        • Local Storage\n        • NAS Systems\n        \n        **Database:**\n        • PostgreSQL\n        • Local Redis`"]
+    end
+    
+    subgraph "Security & Compliance"
+        Security["`**Security Layer**\n        • Input Validation\n        • SQL Injection Prevention\n        • XSS Protection\n        • Rate Limiting`"]
+        
+        Privacy["`**Privacy & Compliance**\n        • GDPR Compliance\n        • Data Encryption\n        • User Consent\n        • Data Deletion`"]
+    end
+    
+    %% Connections
+    WP --> Widget
+    HTML --> Widget
+    Widget --> LB
+    LB --> API
+    API --> Auth
+    Auth --> Queue
+    Queue --> Processor
+    Processor <--> Cache
+    Processor --> VectorDB
+    VectorDB --> LLM
+    LLM --> Confidence
+    Confidence --> Processor
+    Processor --> WhatsApp
+    
+    Crawler --> Embedder
+    KB --> Embedder
+    Embedder --> VectorDB
+    ContentDB --> VectorDB
+    
+    Processor --> Analytics
+    WhatsApp --> Webhook
+    API --> Security
+    Processor --> Privacy
+    
+    Cloud -.-> API
+    SelfHosted -.-> API
+    
+    %% Styling
+    classDef frontend fill:#3498db,stroke:#2c3e50,stroke-width:2px,color:#fff
+    classDef processing fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff  
+    classDef ai fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+    classDef data fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+    classDef external fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff
+    classDef infra fill:#95a5a6,stroke:#7f8c8d,stroke-width:2px,color:#fff
+    classDef security fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+    
+    class WP,HTML,Widget frontend
+    class LB,API,Auth,Queue,Processor,Cache processing
+    class Embedder,VectorDB,LLM,Confidence ai
+    class Crawler,KB,ContentDB data
+    class WhatsApp,Analytics,Webhook external
+    class Cloud,SelfHosted infra
+    class Security,Privacy security
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIAGRAMS: SEQUENCE -->
+      <section id="diagram-sequence" class="section">
+        <header>
+          <h2><i class="fas fa-arrow-right-arrow-left"></i> Request Processing Sequence (Mermaid)</h2>
+          <div class="links"><a href="sequence_diagram.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <div class="mermaid-block">
+            <div class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant W as Website
+    participant C as Chatbot Widget
+    participant A as API Gateway
+    participant P as Processor
+    participant V as Vector DB
+    participant L as LLM
+    participant WA as WhatsApp
+    
+    U->>W: Visit Website
+    W->>C: Load Chatbot
+    U->>C: Ask Question
+    C->>A: Send Query
+    A->>P: Process Request
+    
+    P->>V: Search Similar Content
+    V-->>P: Return Relevant Chunks
+    
+    P->>L: Generate Response
+    Note over L: Context: Website content<br/>+ Additional KB
+    L-->>P: AI Response
+    
+    alt Confident Response
+        P-->>A: Return Answer
+        A-->>C: Send Response
+        C-->>U: Display Answer
+    else Low Confidence
+        P->>WA: Escalate to Human
+        WA-->>U: WhatsApp Notification
+        Note over U,WA: Continue on WhatsApp
+    end
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLATFORMS BASIC -->
+      <section id="gcp-basic" class="section">
+        <header>
+          <h2><i class="fab fa-google"></i> Google Cloud — Basic Architecture</h2>
+          <div class="links"><a href="google_cloud_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Services</h3>
+            <ul>
+              <li>Cloud Functions / Cloud Run, Firestore</li>
+              <li>Vertex AI, Matching Engine (vector search)</li>
+              <li>Cloud Storage, Cloud Logging/Monitoring</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Estimated monthly cost: <span class="cost">$120–400</span></p>
+            <p class="note">Assumes ~200–500 users/mo, moderate usage.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="azure-basic" class="section">
+        <header>
+          <h2><i class="fab fa-microsoft"></i> Microsoft Azure — Basic Architecture</h2>
+          <div class="links"><a href="microsoft_azure_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Services</h3>
+            <ul>
+              <li>API Management, Functions, App Service</li>
+              <li>Azure OpenAI, Cognitive Search</li>
+              <li>Cosmos DB, Storage, Monitor</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Estimated monthly cost: <span class="cost">$150–450</span></p>
+            <p class="note">Enterprise integration and security focus.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="aws-basic" class="section">
+        <header>
+          <h2><i class="fab fa-aws"></i> Amazon AWS — Basic Architecture</h2>
+          <div class="links"><a href="amazon_aws_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Services</h3>
+            <ul>
+              <li>API Gateway, Lambda, ECS/Fargate</li>
+              <li>Bedrock, Kendra, DynamoDB, S3</li>
+              <li>CloudWatch, X-Ray, WAF</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Estimated monthly cost: <span class="cost">$180–550</span></p>
+            <p class="note">Global scale ready; rich service catalog.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="local-basic" class="section">
+        <header>
+          <h2><i class="fas fa-server"></i> Local/Self-Hosted — Basic Architecture</h2>
+          <div class="links"><a href="local_self_hosted_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Stack</h3>
+            <ul>
+              <li>Nginx/Traefik, FastAPI/Express/Flask</li>
+              <li>Ollama + LlamaIndex; ChromaDB/FAISS</li>
+              <li>Redis/PostgreSQL; Prometheus/Grafana</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Estimated monthly cost: <span class="cost">$320–800</span> + hardware</p>
+            <p class="note">Privacy-first with full control and responsibility.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENHANCED ARCHITECTURES -->
+      <section id="gcp-enhanced" class="section">
+        <header>
+          <h2><i class="fab fa-google"></i> GCP — Enhanced Architecture</h2>
+          <div class="links"><a href="enhanced_google_cloud_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Highlights</h3>
+            <ul>
+              <li>Service layers with polished UI and Google-styled branding</li>
+              <li>Flow steps, multi-stage diagrams, and nav buttons</li>
+              <li>Detailed cost analysis with totals</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Focus</h3>
+            <ul>
+              <li>Vertex AI, Matching Engine, Cloud Run/Functions</li>
+              <li>Operational excellence with monitoring</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="azure-enhanced" class="section">
+        <header>
+          <h2><i class="fab fa-microsoft"></i> Azure — Enhanced Architecture</h2>
+          <div class="links"><a href="enhanced_microsoft_azure_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Highlights</h3>
+            <ul>
+              <li>Enterprise features, compliance, and security focus</li>
+              <li>Integration flows, step visuals, and cost categories</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Focus</h3>
+            <ul>
+              <li>Azure OpenAI, Cognitive Search, Functions, SignalR</li>
+              <li>DevOps pipelines and observability</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="aws-enhanced" class="section">
+        <header>
+          <h2><i class="fab fa-aws"></i> AWS — Enhanced Architecture</h2>
+          <div class="links"><a href="enhanced_amazon_aws_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Highlights</h3>
+            <ul>
+              <li>Compute/AI/Storage/Networking categories with deep catalogs</li>
+              <li>Bedrock model grid, scaling flows, and cost tiers</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Focus</h3>
+            <ul>
+              <li>API Gateway, Lambda, DynamoDB, Kendra, Connect</li>
+              <li>Global scale and multi-region patterns</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- MULTI-TENANT ARCHITECTURES -->
+      <section id="gcp-mt" class="section">
+        <header>
+          <h2><i class="fab fa-google"></i> GCP — Multi-Tenant Architecture</h2>
+          <div class="links"><a href="multi_tenant_google_cloud.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Capabilities</h3>
+            <ul>
+              <li>4 specialized agents (support, sales, technical, routing)</li>
+              <li>5–15 websites per tenant; analytics and isolation</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Typical monthly: <span class="cost">$75–145</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="azure-mt" class="section">
+        <header>
+          <h2><i class="fab fa-microsoft"></i> Azure — Multi-Tenant Architecture</h2>
+          <div class="links"><a href="multi_tenant_microsoft_azure.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Capabilities</h3>
+            <ul>
+              <li>Enterprise-focused; Teams integrations</li>
+              <li>Security boundaries, compliance, and billing</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Typical monthly: <span class="cost">$385–495</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="aws-mt" class="section">
+        <header>
+          <h2><i class="fab fa-aws"></i> AWS — Multi-Tenant Architecture</h2>
+          <div class="links"><a href="multi_tenant_amazon_aws.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Capabilities</h3>
+            <ul>
+              <li>Global scale; 31 regions; agent specializations</li>
+              <li>Advanced routing and analytics agent patterns</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Typical monthly: <span class="cost">$1,025–1,430</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="local-mt" class="section">
+        <header>
+          <h2><i class="fas fa-server"></i> Local — Multi-Tenant Architecture</h2>
+          <div class="links"><a href="multi_tenant_local_architecture.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card">
+            <h3>Capabilities</h3>
+            <ul>
+              <li>Privacy-first agents; custom workflows</li>
+              <li>Unlimited sites with infrastructure control</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Estimate</h3>
+            <p>Typical monthly: <span class="cost">$520–1,040</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- IMPLEMENTATION GUIDES -->
+      <section id="guides-index" class="section">
+        <header>
+          <h2><i class="fas fa-compass"></i> Implementation Guides — Hub</h2>
+          <div class="links"><a href="implementation_guides_index.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <p class="note">Start here to pick the right step-by-step guide with comparison and getting-started CTAs.</p>
+          <div class="grid">
+            <div class="card"><h3>Includes</h3>
+              <ul>
+                <li>Guide cards per platform</li>
+                <li>Comparison and prerequisites</li>
+                <li>Links to detailed timeline</li>
+              </ul>
+            </div>
+            <div class="card"><h3>Outcomes</h3>
+              <ul>
+                <li>Clear entry point by platform</li>
+                <li>Production-grade pipelines</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="guide-gcp" class="section">
+        <header>
+          <h2><i class="fab fa-google"></i> Guide — Google Cloud</h2>
+          <div class="links"><a href="implementation_guide_google_cloud.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card"><h3>What you get</h3>
+            <ul>
+              <li>8-week deployment with CI/CD</li>
+              <li>Code blocks and commands (Prism)</li>
+              <li>Security, monitoring, and IaC</li>
+            </ul>
+          </div>
+          <div class="card"><h3>Style</h3>
+            <ul>
+              <li>Google-styled UI; grids and step sections</li>
+              <li>Warnings, info boxes, and command lists</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="guide-azure" class="section">
+        <header>
+          <h2><i class="fab fa-microsoft"></i> Guide — Microsoft Azure</h2>
+          <div class="links"><a href="implementation_guide_microsoft_azure.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card"><h3>What you get</h3>
+            <ul>
+              <li>Enterprise deployment with DevOps pipelines</li>
+              <li>Powershell/code blocks, warnings, info</li>
+            </ul>
+          </div>
+          <div class="card"><h3>Focus</h3>
+            <ul>
+              <li>Azure OpenAI, Cognitive Search, App Service</li>
+              <li>Observability, governance, compliance</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="guide-aws" class="section">
+        <header>
+          <h2><i class="fab fa-aws"></i> Guide — Amazon AWS</h2>
+          <div class="links"><a href="implementation_guide_amazon_aws.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card"><h3>What you get</h3>
+            <ul>
+              <li>Global scale, multi-region CI/CD</li>
+              <li>Bash/Terraform blocks, region planning</li>
+            </ul>
+          </div>
+          <div class="card"><h3>Focus</h3>
+            <ul>
+              <li>Bedrock, Kendra, Lambda, DynamoDB</li>
+              <li>Resilience and performance</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="guide-local" class="section">
+        <header>
+          <h2><i class="fas fa-server"></i> Guide — Local / Self-Hosted</h2>
+          <div class="links"><a href="implementation_guide_local.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content grid">
+          <div class="card"><h3>What you get</h3>
+            <ul>
+              <li>Privacy-first deployment with security hardening</li>
+              <li>Docker-oriented setup and tuning</li>
+            </ul>
+          </div>
+          <div class="card"><h3>Focus</h3>
+            <ul>
+              <li>Open-source models (Llama/Mistral) and Chroma/FAISS</li>
+              <li>Hardware considerations and monitoring</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="timeline" class="section">
+        <header>
+          <h2><i class="fas fa-calendar"></i> Detailed Implementation Timeline</h2>
+          <div class="links"><a href="detailed_implementation_timeline.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>Week-by-week, day-by-day tasks with deliverables</li>
+            <li>Navigation links and hoverable cards per day</li>
+            <li>Use alongside platform-specific guides</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- INTERACTIVE & DOCS -->
+      <section id="enhanced-comparison" class="section">
+        <header>
+          <h2><i class="fas fa-sliders"></i> Enhanced Platform Comparison — Smart Selector</h2>
+          <div class="links"><a href="enhanced_platform_comparison.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>Interactive priority selection and scoring matrix</li>
+            <li>Decision tree and final recommendations</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="presentation" class="section">
+        <header>
+          <h2><i class="fas fa-person-chalkboard"></i> Slide Presentation</h2>
+          <div class="links"><a href="chatbot_architecture_presentation.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>Reveal.js slides: overview, data flow, cloud vs. local</li>
+            <li>WhatsApp escalation and cost model comparison</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="single-page-diagram" class="section">
+        <header>
+          <h2><i class="fas fa-scroll"></i> Single Page Architecture Diagram</h2>
+          <div class="links"><a href="chatbot_architecture_single_page.html" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>Unified layers grid (frontend, API, processing, AI, data, external)</li>
+            <li>Flow steps, cost options, tech tiles</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="readme" class="section">
+        <header>
+          <h2><i class="fas fa-book"></i> README — Files Collection & Entry Points</h2>
+          <div class="links"><a href="README.md" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>Catalog of all files: navigation, guides, diagrams, comparisons</li>
+            <li>Agent types, multi-tenant features, and key costs</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="tech-guide" class="section">
+        <header>
+          <h2><i class="fas fa-book"></i> Technical Architecture Guide</h2>
+          <div class="links"><a href="chatbot_architecture_guide.md" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>Cloud and self-hosted options with example code</li>
+            <li>Ingestion pipeline, widget integration, FastAPI backend</li>
+            <li>WhatsApp escalation (Twilio) and monitoring examples</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="recreation-guide" class="section">
+        <header>
+          <h2><i class="fas fa-book"></i> Complete Suite — Recreation Guide</h2>
+          <div class="links"><a href="Complete_Chatbot_Architecture_Suite_Recreation_Guide.md" target="_blank">Open original</a></div>
+        </header>
+        <div class="content">
+          <ul>
+            <li>29–30 files overview, branding, and platform palettes</li>
+            <li>Agent specs, multi-tenant support, and cost analysis</li>
+            <li>Extensive backend and vector DB integrations</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="footer">This page consolidates and links all resources in the suite. Mermaid is initialized once; open originals for full UI/interactive content.</div>
+    </main>
+  </div>
+  <a class="fab-top" href="#overview-index" title="Back to top"><i class="fas fa-arrow-up"></i></a>
+
+  <script>
+    // Mermaid init (single init for this consolidated page)
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      themeVariables: {
+        // Base backgrounds - deep navy for contrast
+        background: '#0d1421',
+        mainBkg: '#0d1421',
+        
+        // Primary nodes - rich blue-gray with good contrast
+        primaryColor: '#1e293b',
+        primaryBorderColor: '#3b82f6',
+        primaryTextColor: '#f1f5f9',
+        
+        // Secondary nodes - warmer gray
+        secondaryColor: '#374151',
+        secondBorderColor: '#6366f1',
+        secondaryTextColor: '#f8fafc',
+        
+        // Tertiary nodes - subtle purple accent
+        tertiaryColor: '#312e81',
+        tertiaryBorderColor: '#8b5cf6',
+        tertiaryTextColor: '#e2e8f0',
+        
+        // General node styling
+        nodeBkg: '#1e293b',
+        nodeBorder: '#3b82f6',
+        nodeTextColor: '#f1f5f9',
+        
+        // Lines and arrows - bright cyan for visibility
+        lineColor: '#06b6d4',
+        edgeLabelBackground: '#1e293b',
+        
+        // Clusters and subgraphs
+        clusterBkg: '#0f172a',
+        clusterBorder: '#06b6d4',
+        
+        // Class diagrams
+        classText: '#f1f5f9',
+        classBkg: '#1e293b',
+        classBorder: '#3b82f6',
+        
+        // Sequence diagrams
+        actorBkg: '#1e293b',
+        actorBorder: '#3b82f6',
+        actorTextColor: '#f1f5f9',
+        actorLineColor: '#06b6d4',
+        signalColor: '#06b6d4',
+        signalTextColor: '#f1f5f9',
+        
+        // Notes and labels
+        noteBkg: '#312e81',
+        noteBorderColor: '#8b5cf6',
+        noteTextColor: '#f1f5f9',
+        labelBoxBkgColor: '#1e293b',
+        labelBoxBorderColor: '#3b82f6',
+        labelTextColor: '#f1f5f9',
+        
+        // Error states
+        errorBkgColor: '#dc2626',
+        errorTextColor: '#fef2f2',
+        
+        // Task colors (Gantt charts)
+        taskBkgColor: '#1e293b',
+        taskTextColor: '#f1f5f9',
+        taskTextLightColor: '#f1f5f9',
+        taskTextOutsideColor: '#f1f5f9',
+        taskTextClickableColor: '#06b6d4',
+        
+        // Active task
+        activeTaskBkgColor: '#3b82f6',
+        activeTaskBorderColor: '#1d4ed8',
+        
+        // Grid and section backgrounds
+        gridColor: '#374151',
+        section0: '#1e293b',
+        section1: '#312e81',
+        section2: '#0f172a',
+        section3: '#374151',
+        
+        // Alternative colors for variety
+        altBackground: '#0f172a',
+        altSectionBkg: '#1e293b'
+      }
+    });
+
+    // Sidebar filter
+    const filterInput = document.getElementById('tocFilter');
+    const toc = document.getElementById('toc');
+    filterInput.addEventListener('input', () => {
+      const q = filterInput.value.trim().toLowerCase();
+      const links = toc.querySelectorAll('a');
+      links.forEach(a => {
+        const text = (a.innerText || a.textContent || '').toLowerCase();
+        a.classList.toggle('hide', q && !text.includes(q));
+      });
+    });
+
+    // Smooth-scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        if (!id || id === '#') return;
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', id);
+      });
+    });
+
+    // Active section highlighting in TOC
+    const sections = Array.from(document.querySelectorAll('main section[id]'));
+    const linksMap = new Map();
+    document.querySelectorAll('aside .toc a[href^="#"]').forEach(link => {
+      linksMap.set(link.getAttribute('href').replace(location.origin, ''), link);
+    });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = `#${entry.target.id}`;
+        const link = linksMap.get(id);
+        if (!link) return;
+        if (entry.isIntersecting) {
+          document.querySelectorAll('aside .toc a.active').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: [0, 1] });
+    sections.forEach(sec => observer.observe(sec));
+  </script>
+</body>
+</html>
