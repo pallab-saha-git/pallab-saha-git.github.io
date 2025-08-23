@@ -245,9 +245,9 @@ body::before{
 @media (max-width:600px){
     .dot-nav{right:6px}
     .social-list{left:6px}
-    .dot-nav .dot,.social-list li a{width:35px;height:35px}
-    .dot-nav .dot i{font-size:0.8rem}
-    .social-list svg{width:14px;height:14px}
+    .dot-nav .dot,.social-list li a{width:32px;height:32px}
+    .dot-nav .dot i{font-size:0.75rem}
+    .social-list svg{width:13px;height:13px}
 }
 
 /* Prevent content overlapping fixed social-list / dot-nav by adding safe side paddings */
@@ -259,6 +259,18 @@ body::before{
 /* Apply side rails to main content area */
 body{padding-left:var(--rail-left);padding-right:var(--rail-right)}
 /* Keep hero background elements unaffected; fixed nav stays at viewport edges */
+
+/* Mobile-first readability: hide side rails and give content full width */
+@media (max-width:900px){
+    /* Keep side elements on the sides but remove rails so content is full width */
+    :root{--rail-left:0px;--rail-right:0px}
+    body{padding-left:0;padding-right:0}
+    /* Slightly tighter sections and container padding on mobile for comfort */
+    .container{padding:0 16px}
+    .section{padding:64px 0}
+    /* Allow hero kicker text to wrap on small screens */
+    .hero-kicker{white-space:normal}
+}
 
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(5,7,20,.85);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);display:grid;place-items:center;opacity:0;visibility:hidden;transition:var(--transition)}
