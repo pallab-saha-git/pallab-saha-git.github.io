@@ -167,9 +167,12 @@ body::before{
 /* Dot Navigation */
 .dot-nav{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:15}
 .dot-nav ul{list-style:none;display:flex;flex-direction:column;gap:16px}
-.dot-nav .dot{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:rgba(5,7,20,.7);border:2px solid var(--glass-stroke);color:var(--muted);text-decoration:none;transition:all var(--transition);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px)}
+.dot-nav .dot{position:relative;display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:rgba(5,7,20,.7);border:2px solid var(--glass-stroke);color:var(--muted);text-decoration:none;transition:all var(--transition);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px)}
 .dot-nav .dot:hover,.dot-nav .dot.active{background:var(--gradient);color:#051018;border-color:var(--primary-cyan);transform:scale(1.1);box-shadow:0 0 20px rgba(0,247,255,.4)}
 .dot-nav .dot i{font-size:1.1rem}
+.dot-nav .dot::after{content:attr(data-tooltip);position:absolute;right:calc(100% + 12px);top:50%;transform:translateY(-50%) scale(.95);transform-origin:right center;opacity:0;padding:6px 10px;border-radius:8px;background:rgba(5,7,20,.92);border:1px solid var(--glass-stroke);color:var(--text);white-space:nowrap;font-size:.75rem;letter-spacing:.4px;pointer-events:none;transition:opacity var(--transition),transform var(--transition);box-shadow:0 10px 20px rgba(0,0,0,.35)}
+.dot-nav .dot::before{content:"";position:absolute;right:calc(100% + 4px);top:50%;transform:translateY(-50%) scale(.5);opacity:0;border:6px solid transparent;border-left-color:rgba(5,7,20,.92);transition:opacity var(--transition),transform var(--transition)}
+.dot-nav .dot:hover::after,.dot-nav .dot:hover::before,.dot-nav .dot:focus-visible::after,.dot-nav .dot:focus-visible::before{opacity:1;transform:translateY(-50%) scale(1)}
 
 /* Side Social Bar */
 .social-list{position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:15;list-style:none;display:flex;flex-direction:column;gap:16px}
@@ -242,6 +245,7 @@ body::before{
     .dot-nav .dot i{font-size:0.9rem}
     .social-list svg{width:16px;height:16px}
     .scroll-down-indicator{bottom:15px}
+    .dot-nav .dot::after,.dot-nav .dot::before{display:none}
 }
 
 @media (max-width:600px){

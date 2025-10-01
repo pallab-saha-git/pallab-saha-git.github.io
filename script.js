@@ -375,6 +375,48 @@ class ProjectModal {
                 challenges: 'Ensuring consistent and accurate responses while handling complex multi-intent conversations and maintaining enterprise-level security and governance.',
                 outcome: 'Successfully deployed system handling enterprise-level conversations with improved response accuracy and automated decision-making capabilities.'
             },
+            'book-automation': {
+                title: 'AI-Powered Book Publication Automation Platform',
+                description: 'End-to-end publication engine that ingests web content, applies Gemini-assisted enrichment, and exports press-ready assets with operational telemetry.',
+                features: [
+                    'Automates ingest-to-publish workflows in Flask, generating TXT, DOCX, PDF, and HTML formats with scheduled reports',
+                    'Integrates Google Gemini for configurable content enhancement, restructuring, and reviewer feedback loops',
+                    'Stores semantic embeddings in ChromaDB to unlock vector search and context-aware retrieval across large manuscripts',
+                    'Provides modular REST endpoints for orchestrating multi-step pipelines with live status dashboards and analytics',
+                    'Uses Playwright-driven scraping with screenshot auditing, retry guards, and deduplication for dynamic sources'
+                ],
+                technologies: ['Flask', 'Google Gemini', 'ChromaDB', 'Playwright', 'REST API', 'Docker'],
+                challenges: 'Coordinating resilient scraping, AI enrichment, and export services while keeping human approvals and observability in sync.',
+                outcome: 'Delivered a configurable automation suite that reduces publication turnaround time and improves content quality via AI-assisted reviews.'
+            },
+            powerbiz: {
+                title: 'PowerBiz Developer Analytics – AI Engineering Intelligence',
+                description: 'Multi-agent analytics platform that fuses repository signals and collaboration data to narrate engineering health in Slack.',
+                features: [
+                    'Builds LangChain/LangGraph agents for harvesting GitHub data, DORA metrics, and Slack interactions into a unified model',
+                    'Implements diff analysis, churn scoring, and narrative generation to spotlight shipping risks and high-impact reviewers',
+                    'Runs deterministic async pipelines for daily and weekly engineering briefings with drill-down insights',
+                    'Publishes interactive visualizations via Matplotlib and Plotly to surface productivity and quality trends',
+                    'Ships Slack slash commands and notifications backed by SQLite/PostgreSQL persistence and Docker Compose packaging'
+                ],
+                technologies: ['LangChain', 'LangGraph', 'GitHub API', 'Slack API', 'SQLite', 'PostgreSQL', 'Matplotlib', 'Plotly', 'Docker Compose'],
+                challenges: 'Synchronizing multi-agent orchestration with reproducible metrics reporting across asynchronous data sources.',
+                outcome: 'Enabled proactive engineering intelligence with automated Slack storytelling and deploy-anywhere observability scripts.'
+            },
+            'n8n-automation': {
+                title: 'Email Workflow Automation with n8n',
+                description: 'No-code orchestration that personalizes Gmail outreach from Google Sheets while safeguarding OAuth and delivery edge cases.',
+                features: [
+                    'Uses n8n SplitInBatches and Schedule Trigger nodes to send controlled email batches from dynamic Google Sheets data',
+                    'Configures Gmail SMTP with templated personalization and fallback handling for transient delivery errors',
+                    'Runs locally with Docker and ngrok for stable OAuth callbacks and webhook reliability during development',
+                    'Implements guardrails for duplicates, retries, and audit logging across the entire email journey',
+                    'Validates workflows end-to-end covering authentication, scheduling, and message personalization scenarios'
+                ],
+                technologies: ['n8n', 'Google Sheets', 'Gmail SMTP', 'Docker', 'ngrok', 'OAuth2'],
+                challenges: 'Ensuring OAuth, scheduling, and batching remain robust when scaling personalized automations without manual intervention.',
+                outcome: 'Delivered a resilient automation that keeps outbound campaigns consistent while remaining fully configurable and testable locally.'
+            },
             knowledge: {
                 title: 'Enterprise Knowledge Base System',
                 description: 'Created a curated knowledge base system with approval pipelines to ensure governance and response accuracy for enterprise-level AI applications with semantic search capabilities.',
