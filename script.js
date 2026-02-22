@@ -417,6 +417,24 @@ class ProjectModal {
                 challenges: 'Ensuring OAuth, scheduling, and batching remain robust when scaling personalized automations without manual intervention.',
                 outcome: 'Delivered a resilient automation that keeps outbound campaigns consistent while remaining fully configurable and testable locally.'
             },
+            'agent-architecture': {
+                title: 'Multi-Agent Chatbot Architecture Suite',
+                description: 'A comprehensive architecture and implementation suite for multi-agent, multi-tenant enterprise chatbots, covering AWS, Azure, GCP, and self-hosted deployments with detailed cost breakdowns, interactive diagrams, and step-by-step implementation guides.',
+                features: [
+                    '4 specialized AI agents: Customer Support, Sales & Lead, Technical Support, and Intelligent Router',
+                    'Multi-tenant architecture with complete data isolation, brand customization, and per-tenant analytics',
+                    'Platform-specific deployment guides for Google Cloud ($75–145/mo), Azure ($385–495/mo), AWS ($1,025–1,430/mo), and Self-Hosted',
+                    'Interactive architecture diagrams with Mermaid-based sequence and flow visualization',
+                    'End-to-end CI/CD pipeline templates for Cloud Build, Azure DevOps, CodePipeline, and GitLab CI',
+                    'Infrastructure as Code templates and day-by-day implementation timelines',
+                    'Security hardening, compliance configurations, and production monitoring setup',
+                    '30+ detailed files covering architecture, comparison, implementation, and multi-tenant design'
+                ],
+                technologies: ['Multi-Agent AI', 'Azure OpenAI', 'AWS Bedrock', 'GCP Vertex AI', 'LangChain', 'Docker', 'Kubernetes', 'Terraform', 'Python'],
+                challenges: 'Designing a unified architecture framework that works across four distinct cloud environments while supporting multi-tenancy, agent specialization, and cost optimization.',
+                outcome: 'Produced a production-ready, platform-agnostic architecture suite enabling rapid enterprise chatbot deployment with clear cost estimates and implementation paths.',
+                link: 'agent_model/new/multi_agent_platform_overview.html'
+            },
             knowledge: {
                 title: 'Enterprise Knowledge Base System',
                 description: 'Created a curated knowledge base system with approval pipelines to ensure governance and response accuracy for enterprise-level AI applications with semantic search capabilities.',
@@ -556,6 +574,13 @@ class ProjectModal {
                     <h4>Results & Impact</h4>
                     <p>${project.outcome}</p>
                 </div>
+
+                ${project.link ? `
+                <div class="modal-section" style="text-align:center; padding-top: 0.5rem;">
+                    <a href="${project.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:8px; padding:12px 28px; background:linear-gradient(135deg,#00f7ff,#0073ff); color:#050714; border-radius:50px; font-weight:700; text-decoration:none; font-size:0.95rem; box-shadow:0 4px 18px rgba(0,247,255,0.35); transition:transform 0.2s ease,box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(0,247,255,0.5)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(0,247,255,0.35)'">
+                        <i class="fa-solid fa-diagram-project"></i> Open Full Architecture
+                    </a>
+                </div>` : ''}
             </div>
         `;
     }
