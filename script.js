@@ -30,9 +30,12 @@ class ParticleSystem {
                 y: Math.random() * this.canvas.height,
                 vx: (Math.random() - 0.5) * 0.3,
                 vy: (Math.random() - 0.5) * 0.3,
-                radius: Math.random() * 1.5 + 0.5,
-                opacity: Math.random() * 0.4 + 0.1,
-                color: Math.random() > 0.5 ? '#00f7ff' : '#0073ff'
+                radius: Math.random() * 2.5 + 1,
+                opacity: Math.random() * 0.5 + 0.2,
+                color: Math.random() > 0.5 ? '#00f7ff' : '#0073ff',
+                rotation: Math.random() * Math.PI * 2,
+                rotationSpeed: (Math.random() - 0.5) * 0.01,
+                spikes: Math.random() > 0.6 ? 6 : 4
             });
         }
     }
@@ -76,14 +79,28 @@ class ParticleSystem {
             particle.x = Math.max(0, Math.min(this.canvas.width, particle.x));
             particle.y = Math.max(0, Math.min(this.canvas.height, particle.y));
 
-            // Draw particle
+            // Rotate star
+            particle.rotation += particle.rotationSpeed;
+
+            // Draw star particle
             this.ctx.save();
             this.ctx.globalAlpha = particle.opacity;
             this.ctx.fillStyle = particle.color;
-            this.ctx.shadowBlur = 10;
+            this.ctx.shadowBlur = 12;
             this.ctx.shadowColor = particle.color;
+            this.ctx.translate(particle.x, particle.y);
+            this.ctx.rotate(particle.rotation);
             this.ctx.beginPath();
-            this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+            const spikes = particle.spikes;
+            const outerR = particle.radius;
+            const innerR = outerR * 0.4;
+            for (let s = 0; s < spikes * 2; s++) {
+                const r = s % 2 === 0 ? outerR : innerR;
+                const angle = (s * Math.PI) / spikes;
+                s === 0 ? this.ctx.moveTo(r * Math.cos(angle), r * Math.sin(angle))
+                        : this.ctx.lineTo(r * Math.cos(angle), r * Math.sin(angle));
+            }
+            this.ctx.closePath();
             this.ctx.fill();
             this.ctx.restore();
 
