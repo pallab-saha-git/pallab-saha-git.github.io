@@ -808,7 +808,46 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.4s ease-in-out';
     requestAnimationFrame(()=>{ document.body.style.opacity = '1'; });
+
+    // Calculate and update dynamic experience
+    calculateExperience();
 });
+
+// Dynamic Experience Calculator
+function calculateExperience() {
+    const startDate = new Date('2022-02-01'); // Start date: Feb 2022
+    const currentDate = new Date();
+    
+    // Calculate total months
+    const yearsDiff = currentDate.getFullYear() - startDate.getFullYear();
+    const monthsDiff = currentDate.getMonth() - startDate.getMonth();
+    const totalMonths = (yearsDiff * 12) + monthsDiff;
+    
+    // Calculate years
+    const years = Math.floor(totalMonths / 12);
+    
+    // Determine display text
+    let experienceText;
+    if (years >= 4) {
+        experienceText = '4+';
+    } else if (years >= 3) {
+        experienceText = '3+';
+    } else if (years >= 2) {
+        experienceText = '2+';
+    } else if (years >= 1) {
+        experienceText = '1+';
+    } else {
+        experienceText = '<1';
+    }
+    
+    // Update all experience year elements
+    const experienceElements = document.querySelectorAll('#experience-years, #experience-years-about');
+    experienceElements.forEach(element => {
+        if (element) {
+            element.textContent = experienceText;
+        }
+    });
+}
 
 // Utility functions
 function debounce(func, wait) {
